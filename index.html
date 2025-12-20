@@ -288,6 +288,13 @@
         <h3 class="section-title">รายการที่พบ</h3>
         <div class="history-list" id="historyList"></div>
 
+        <h3 class="section-title">จัดการข้อมูล</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <button class="secondary-btn" onclick="exportData()" style="margin-top:0; border-color: #4cd137; color: #4cd137;">📥 สำรองข้อมูล</button>
+            <button class="secondary-btn" onclick="document.getElementById('importFile').click()" style="margin-top:0;">📤 นำเข้าข้อมูล</button>
+        </div>
+<input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+
         <button class="secondary-btn" onclick="showForm()">⬅️ กลับไปหน้าบันทึก</button>
     </div>
 </div>
@@ -520,6 +527,44 @@
     });
 
     window.onload = initForm;
+
+    // ฟังก์ชันส่งออกข้อมูลเป็นไฟล์ JSON
+function exportData() {
+    const data = localStorage.getItem("expenses") || "[]";
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const timestamp = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `moniday-backup-${timestamp}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ฟังก์ชันนำเข้าข้อมูลจากไฟล์
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            if (Array.isArray(importedData)) {
+                if (confirm("ต้องการนำเข้าข้อมูลใช่ไหม? ข้อมูลเดิมในเครื่องนี้จะถูกแทนที่ด้วยข้อมูลใหม่")) {
+                    localStorage.setItem("expenses", JSON.stringify(importedData));
+                    alert("นำเข้าข้อมูลสำเร็จ ✨");
+                    updateDashboard(); // รีเฟรชหน้าจอ
+                }
+            } else {
+                alert("รูปแบบไฟล์ไม่ถูกต้อง");
+            }
+        } catch (err) {
+            alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
+        }
+    };
+    reader.readAsText(file);
+}
 </script>
 
 </body>
