@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoniDay - Minimal Expense</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --accent: #bb86fc;
+            --input-bg: #2d2d2d;
+            --border: #333333;
+            --error: #cf6679;
+        }
+
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        h2 { font-weight: 500; margin-bottom: 25px; color: #ffffff; font-size: 1.5rem; text-align: center; }
+        h3.section-title { font-size: 0.9rem; color: var(--text-dim); margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus, select:focus { border-color: var(--accent); }
+
+        .filter-container {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            justify-items: center;
+        }
+
+        .filter-grid small { display: block; text-align: center; margin-bottom: 5px; }
+        .filter-grid input { text-align: center; }
+
+        button.primary-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: var(--accent);
+            color: #121212;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #dashboardSection { display: none; }
+
+        .summary-card {
+            background: var(--input-bg);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-card p { margin: 8px 0 0; font-size: 1.8rem; font-weight: 600; color: var(--accent); }
+
+        .chart-container {
+            position: relative;
+            margin: 10px 0 20px;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Map Style */
+        #map {
+            height: 200px;
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            z-index: 1;
+            background: #121212;
+        }
+
+        .history-list {
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 5px;
+        }
+
+        .history-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .action-btns { margin-top: 8px; display: flex; gap: 8px; }
+
+        .edit-btn, .delete-btn {
+            background: transparent;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        .edit-btn { color: var(--accent); border: 1px solid var(--accent); }
+        .delete-btn { color: var(--error); border: 1px solid var(--error); }
+
+        .amount-text { color: var(--accent); font-weight: 600; }
+
+        .editing-mode {
+            background: rgba(187, 134, 252, 0.05);
+            border: 1px dashed var(--accent);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="formSection">
+        <div id="editNotice" class="editing-mode">
+            <small style="color: var(--accent)">⚠️ กำลังอยู่ในโหมดแก้ไขรายการ</small>
+        </div>
+        <h2 id="formTitle">บันทึกค่าใช้จ่าย</h2>
+        <form id="expenseForm">
+            <input type="hidden" id="editIndex" value="-1">
+            <div class="form-group"><label>วันที่ใช้เงิน</label><input type="date" id="date" required></div>
+            <div class="form-group"><label>รายละเอียด</label><input type="text" id="description" placeholder="กรอกรายละเอียด..." required></div>
+            <div class="form-group"><label>จำนวนเงิน (บาท)</label><input type="number" id="amount" placeholder="0.00" step="0.01" required></div>
+            <div class="form-group">
+                <label>หมวดหมู่</label>
+                <select id="category">
+    <option value="อาหารและเครื่องดื่ม" selected>🍔 อาหารและเครื่องดื่ม</option>
+    <option value="ของทานเล่น/ขนม">🍿 ของทานเล่น/ขนม</option>
+    <option value="วัตถุดิบทำอาหาร">🥬 วัตถุดิบทำอาหาร/ซูเปอร์ฯ</option>
+
+    <option value="ค่าเดินทาง/รถสาธารณะ">🚌 ค่าเดินทาง/รถสาธารณะ</option>
+    <option value="น้ำมันรถ/แก๊ส">⛽ น้ำมันรถ/แก๊ส</option>
+    <option value="ค่าที่จอดรถ/ทางด่วน">🛣️ ค่าที่จอดรถ/ทางด่วน</option>
+    <option value="ซ่อมบำรุงรถ">🔧 ซ่อมบำรุงรถ/เช็คระยะ</option>
+
+    <option value="ของใช้ในบ้าน">🧺 ของใช้ในบ้าน</option>
+    <option value="ค่าเช่า/งวดบ้าน">🏠 ค่าเช่าบ้าน/งวดบ้าน</option>
+    <option value="ค่าน้ำ/ค่าไฟ">⚡ ค่าน้ำ/ค่าไฟ</option>
+    <option value="ค่าโทรศัพท์/อินเทอร์เน็ต">🌐 ค่ามือถือ/อินเทอร์เน็ต</option>
+
+    <option value="ความงาม/สกินแคร์">💄 ความงาม/สกินแคร์</option>
+    <option value="เสื้อผ้า/เครื่องแต่งกาย">👕 เสื้อผ้า/แฟชั่น</option>
+    <option value="สุขภาพ/ค่ายา">💊 สุขภาพ/ค่ายา/หมอ</option>
+    <option value="ฟิตเนส/กีฬา">💪 ฟิตเนส/ออกกำลังกาย</option>
+
+    <option value="บันเทิง/ดูหนัง/เกม">🎮 บันเทิง/ดูหนัง/เกม</option>
+    <option value="ท่องเที่ยว/ที่พัก">✈️ ท่องเที่ยว/ที่พัก</option>
+    <option value="บุญ/บริจาค">🙏 ทำบุญ/บริจาค</option>
+    <option value="ของขวัญ/สังสรรค์">🎁 ของขวัญ/งานสังคม</option>
+    <option value="สัตว์เลี้ยง">🐾 สัตว์เลี้ยง</option>
+
+    <option value="อุปกรณ์ไอที/แกดเจ็ต">💻 อุปกรณ์ไอที/แกดเจ็ต</option>
+    <option value="การศึกษา/หนังสือ">📚 การศึกษา/หนังสือ</option>
+
+    <option value="ภาษี/ประกัน">🛡️ ภาษี/ประกันภัย</option>
+    <option value="งวดรถ/หนี้สิน">🏦 งวดรถ/ชำระหนี้</option>
+    <option value="เงินให้ครอบครัว">👨‍👩‍👧 เงินให้ครอบครัว</option>
+    <option value="ลงทุน/ออมเงิน">📈 ลงทุน/ออมเงิน</option>
+
+    <option value="อื่นๆ">✨ อื่นๆ</option>
+</select>
+            </div>
+            <div class="form-group">
+                <label>วิธีชำระเงิน</label>
+                <select id="payment">
+                    <option value="เงินสด">เงินสด</option>
+                    <option value="โอนเงิน" selected>โอนเงิน / QR</option>
+                    <option value="บัตรเครดิต">บัตรเครดิต</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>สถานที่</label>
+                <input type="text" id="location" placeholder="พิกัดจะดึงอัตโนมัติ...">
+                <span id="locStatus" style="font-size:0.7rem; color:var(--accent)">กำลังดึงพิกัด...</span>
+            </div>
+            <button type="submit" id="submitBtn" class="primary-btn">บันทึกรายการ</button>
+            <button type="button" class="secondary-btn" onclick="showDashboard()">📊 สรุปข้อมูลการใช้เงิน</button>
+        </form>
+    </div>
+
+    <div id="dashboardSection">
+        <h2>สรุปข้อมูลการใช้เงิน</h2>
+        
+        <div class="filter-container">
+            <label>เลือกช่วงเวลาที่ต้องการดูข้อมูล</label>
+            <div class="filter-grid">
+                <div><small style="color:var(--text-dim)">เริ่มจาก</small><input type="date" id="filterStart" onchange="updateDashboard()"></div>
+                <div><small style="color:var(--text-dim)">ถึงวันที่</small><input type="date" id="filterEnd" onchange="updateDashboard()"></div>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">ยอดใช้จ่ายในช่วงเวลาที่เลือก</h3>
+            <p id="totalAmount">0.00</p>
+        </div>
+
+        <h3 class="section-title">สรุปตามหมวดหมู่ (มาก → น้อย)</h3>
+        <div class="chart-container"><canvas id="expenseChart"></canvas></div>
+        
+        <h3 class="section-title">พิกัดและความร้อนแรง (วงใหญ่ = จ่ายหนัก)</h3>
+        <div id="map"></div>
+
+        <h3 class="section-title">รายการที่พบ</h3>
+        <div class="history-list" id="historyList"></div>
+
+        <button class="secondary-btn" onclick="showForm()">⬅️ กลับไปหน้าบันทึก</button>
+    </div>
+</div>
+
+<script>
+    let myChart = null;
+    let map = null;
+    let markers = []; // ในกรณีนี้จะเก็บ CircleMarker
+    const today = new Date().toISOString().split('T')[0];
+
+    const categoryColors = {
+            "อาหารและเครื่องดื่ม": "#ff9f43",
+            "ของทานเล่น/ขนม": "#feca57",
+            "วัตถุดิบทำอาหาร": "#ff6b6b",
+            "ค่าเดินทาง/รถสาธารณะ": "#48dbfb",
+            "น้ำมันรถ/แก๊ส": "#54a0ff",
+            "ค่าที่จอดรถ/ทางด่วน": "#5f27cd",
+            "ซ่อมบำรุงรถ": "#341f97",
+            "ของใช้ในบ้าน": "#1dd1a1",
+            "ค่าเช่า/งวดบ้าน": "#00d2d3",
+            "ค่าน้ำ/ค่าไฟ": "#ffdb58",
+            "ค่าโทรศัพท์/อินเทอร์เน็ต": "#0abde3",
+            "ความงาม/สกินแคร์": "#ff9ff3",
+            "เสื้อผ้า/เครื่องแต่งกาย": "#f368e0",
+            "สุขภาพ/ค่ายา": "#ee5253",
+            "ฟิตเนส/กีฬา": "#10ac84",
+            "บันเทิง/ดูหนัง/เกม": "#5f27cd",
+            "ท่องเที่ยว/ที่พัก": "#00d2d3",
+            "บุญ/บริจาค": "#ff9f43",
+            "ของขวัญ/สังสรรค์": "#ff6b6b",
+            "สัตว์เลี้ยง": "#54a0ff",
+            "อุปกรณ์ไอที/แกดเจ็ต": "#2e86de",
+            "การศึกษา/หนังสือ": "#341f97",
+            "ภาษี/ประกัน": "#576574",
+            "งวดรถ/หนี้สิน": "#222f3e",
+            "เงินให้ครอบครัว": "#ee5253",
+            "ลงทุน/ออมเงิน": "#1dd1a1",
+            "อื่นๆ": "#bb86fc"
+            };
+
+    function showDashboard() {
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+        if(!document.getElementById('filterStart').value) {
+            document.getElementById('filterStart').value = today;
+            document.getElementById('filterEnd').value = today;
+        }
+        
+        if (!map) {
+            map = L.map('map').setView([13.736717, 100.523186], 10);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+        }
+
+        updateDashboard();
+        setTimeout(() => map.invalidateSize(), 200);
+    }
+
+    function showForm() {
+        document.getElementById('formSection').style.display = 'block';
+        document.getElementById('dashboardSection').style.display = 'none';
+        if(document.getElementById('editIndex').value === "-1") initForm(); 
+    }
+
+    function initForm() {
+        document.getElementById('date').value = today;
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
+        document.getElementById('editNotice').style.display = "none";
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((p) => {
+                document.getElementById('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
+                document.getElementById('locStatus').innerText = "ดึงพิกัดสำเร็จ";
+            });
+        }
+    }
+
+    function updateDashboard() {
+        const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        const start = document.getElementById('filterStart').value;
+        const end = document.getElementById('filterEnd').value;
+
+        const filtered = expenses.filter(item => item.date >= start && item.date <= end);
+        const total = filtered.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " ฿";
+
+        const categoryData = {};
+        filtered.forEach(item => {
+            categoryData[item.category] = (categoryData[item.category] || 0) + parseFloat(item.amount);
+        });
+
+        const sortedEntries = Object.entries(categoryData).sort((a, b) => b[1] - a[1]);
+        const sortedLabels = sortedEntries.map(e => e[0]);
+        const sortedValues = sortedEntries.map(e => e[1]);
+
+        renderChart(sortedLabels, sortedValues);
+        updateMap(filtered);
+
+        const listContainer = document.getElementById('historyList');
+        listContainer.innerHTML = filtered.length ? '' : '<small style="color:var(--text-dim); display:block; text-align:center; padding:10px;">ไม่มีข้อมูล</small>';
+        
+        filtered.slice().reverse().forEach((item) => {
+            const originalIndex = expenses.indexOf(item);
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.innerHTML = `
+                <div>
+                    <strong>${item.description}</strong><br>
+                    <small style="color:var(--text-dim)">${item.date} | ${item.category}</small><br>
+                    <div class="action-btns">
+                        <button class="edit-btn" onclick="editExpense(${originalIndex})">✏️</button>
+                        <button class="delete-btn" onclick="deleteExpense(${originalIndex})">🗑️</button>
+                    </div>
+                </div>
+                <div class="amount-text">-${parseFloat(item.amount).toFixed(2)}</div>
+            `;
+            listContainer.appendChild(div);
+        });
+    }
+
+    function renderChart(labels, values) {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        if (myChart) myChart.destroy();
+        
+        // ใช้สีหมวดหมู่ที่ตั้งไว้สำหรับกราฟด้วย
+        const colors = labels.map(label => categoryColors[label] || "#bb86fc");
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#a0a0a0' } },
+                    x: { grid: { display: false }, ticks: { color: '#a0a0a0', font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    // ส่วนหัวใจหลักของคำขอใหม่: แผนที่วงกลม
+    function updateMap(data) {
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        let coordsFound = [];
+        data.forEach(item => {
+            if (item.location && item.location.includes(',')) {
+                const [lat, lng] = item.location.split(',').map(n => parseFloat(n.trim()));
+                const amount = parseFloat(item.amount);
+                
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    // คำนวณขนาดรัศมี: วงกลมจะใหญ่ตามเงิน แต่ใช้ sqrt เพื่อไม่ให้วงใหญ่เว่อร์เกินไป
+                    // รัศมี (Radius) ในที่นี้คือหน่วยพิกเซล (เพราะใช้ circleMarker)
+                    const radiusSize = Math.sqrt(amount) * 1.5 + 5; 
+                    
+                    // เลือกสีตามหมวดหมู่
+                    const color = categoryColors[item.category] || "#bb86fc";
+
+                    const circle = L.circleMarker([lat, lng], {
+                        radius: radiusSize,
+                        fillColor: color,
+                        color: color,
+                        weight: 1,
+                        opacity: 0.8,
+                        fillOpacity: 0.5
+                    }).addTo(map)
+                    .bindPopup(`<b>${item.description}</b><br>หมวดหมู่: ${item.category}<br>จำนวน: ${amount.toLocaleString()} ฿`);
+                    
+                    markers.push(circle);
+                    coordsFound.push([lat, lng]);
+                }
+            }
+        });
+
+        if (coordsFound.length > 0) {
+            const bounds = L.latLngBounds(coordsFound);
+            map.fitBounds(bounds, { padding: [40, 40] });
+        }
+    }
+
+    function deleteExpense(index) {
+        if (confirm("ต้องการลบใช่หรือไม่?")) {
+            let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            expenses.splice(index, 1);
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+            updateDashboard();
+        }
+    }
+
+    function editExpense(index) {
+        const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        const item = expenses[index];
+        document.getElementById('date').value = item.date;
+        document.getElementById('description').value = item.description;
+        document.getElementById('amount').value = item.amount;
+        document.getElementById('category').value = item.category;
+        document.getElementById('payment').value = item.payment;
+        document.getElementById('location').value = item.location;
+        document.getElementById('editIndex').value = index;
+        document.getElementById('submitBtn').innerText = "อัปเดตรายการ";
+        document.getElementById('editNotice').style.display = "block";
+        showForm();
+    }
+
+    document.getElementById("expenseForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const index = parseInt(document.getElementById('editIndex').value);
+        const expense = {
+            date: document.getElementById("date").value,
+            description: document.getElementById("description").value,
+            amount: document.getElementById("amount").value,
+            category: document.getElementById("category").value,
+            payment: document.getElementById("payment").value,
+            location: document.getElementById("location").value
+        };
+        let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        if (index === -1) expenses.push(expense);
+        else expenses[index] = expense;
+        localStorage.setItem("expenses", JSON.stringify(expenses));
+        alert("บันทึกเรียบร้อย ✨");
+        this.reset();
+        initForm();
+    });
+
+    window.onload = initForm;
+</script>
+
+</body>
+</html>
