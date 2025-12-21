@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗓️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoniDay - Minimal Expense</title>
+    <title>MoniDay - Minimal Expense Recorder</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -199,9 +199,13 @@
 <div class="container">
     <div id="formSection">
         <div id="editNotice" class="editing-mode">
-            <small style="color: var(--accent)">⚠️ กำลังอยู่ในโหมดแก้ไขรายการ</small>
+            <small style="color: var(--accent)">⚠️ กำลังอยู่ในโหมดแก้ไขรายการที่บันทึกไปแล้ว..</small>
         </div>
-        <h2 id="formTitle">บันทึกค่าใช้จ่าย</h2>
+        <h2 id="formTitle">🪙</h2>
+        <h2 id="formTitle">MoniDay</h2>
+        <p style="font-size: 0.85rem; color: #a0a0a0; text-align: center; margin-bottom: 30px; line-height: 1.4;">
+        Own your spending,<br> secure your future.
+        </p>
         <form id="expenseForm">
             <input type="hidden" id="editIndex" value="-1">
             <div class="form-group"><label>วันที่ใช้เงิน</label><input type="date" id="date" required></div>
@@ -284,10 +288,10 @@
         <h3 class="section-title">สรุปตามหมวดหมู่ (มาก → น้อย)</h3>
         <div class="chart-container"><canvas id="expenseChart"></canvas></div>
         
-        <h3 class="section-title">พิกัดและความร้อนแรง (วงใหญ่ = จ่ายหนัก)</h3>
+        <h3 class="section-title">สถานที่ใช้เงินและปริมาณเงิน (วงใหญ่ = จ่ายมาก)</h3>
         <div id="map"></div>
 
-        <h3 class="section-title">รายการที่พบ</h3>
+        <h3 class="section-title">รายการบันทึกที่พบ</h3>
         <div class="history-list" id="historyList"></div>
 
         <h3 class="section-title">จัดการข้อมูล</h3>
@@ -302,6 +306,7 @@
 </div>
 
 <script>
+    let currentPaymentFilter = 'all'; // ค่า Default เป็นทั้งหมด
     let myChart = null;
     let map = null;
     let markers = []; // ในกรณีนี้จะเก็บ CircleMarker
@@ -365,7 +370,7 @@
     function initForm() {
         document.getElementById('date').value = today;
         document.getElementById('editIndex').value = "-1";
-        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
+        document.getElementById('submitBtn').innerText = "บันทึกรายการใช้เงินนี้";
         document.getElementById('editNotice').style.display = "none";
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((p) => {
@@ -436,10 +441,21 @@
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#a0a0a0' } },
-                    x: { grid: { display: false }, ticks: { color: '#a0a0a0', font: { size: 10 } } }
+                y: {
+                    beginAtZero: true,
+                    grid: { display: false }, // เอาเส้นตารางแนวนอนออก
+                    ticks: { display: false }, // เอาตัวเลขแกน Y ออกเพื่อให้ดูคลีนที่สุด
+                    border: { display: false } // เอาเส้นขอบแกนออก
+                },
+                x: {
+                    grid: { display: false }, // เอาเส้นตารางแนวตั้งออก
+                    border: { display: false }, // เอาเส้นขอบแกนออก
+                    ticks: {
+                        color: '#a0a0a0', // ปรับสีตัวอักษรหมวดหมู่ให้ดู Soft
+                        font: { size: 10 } } }
                 }
             }
+
         });
     }
 
