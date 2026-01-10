@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22> <text y=%22.9em%22 font-size=%2290%22> 💸</text> </svg>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoniDay - Your Expense Recorder</title>
+    <title>MoniDay</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <!-- add this for icon when add to homescreen -->
+    <!-- Icon's image when it show on homescreen -->
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="/Users/nutkhuannaen/Desktop/Moni Day/moniday/moniday/icon.png">
-    <!-- add this above for icon when add to homescreen -->
+    <!-- Until this line -->
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!---------------------------------------------------------------------------CSS Zone------------------------------------------------------------------------------>
     <style>
         :root {
             --bg-body: #121212;
@@ -140,6 +141,11 @@
             border: 1px solid var(--border);
         }
 
+        .chart-card, .place-title, .list-section, .manage-data-section {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
         .summary-card p { margin: 8px 0 0; font-size: 1.8rem; font-weight: 600; color: var(--accent); }
 
         .chart-container {
@@ -200,120 +206,145 @@
         }
     </style>
 </head>
+
+<!-------------------------------------------------------------------------------HTML Zone-------------------------------------------------------------------------->
 <body>
 
 <div class="container">
+
+    <!--First page for input the data-->
     <div id="formSection">
         <div id="editNotice" class="editing-mode">
             <small style="color: var(--accent)">⚠️ กำลังอยู่ในโหมดแก้ไขรายการที่บันทึกไปแล้ว..</small>
         </div>
         <h2 id="formTitle">MoniDay</h2>
         <p style="font-size: 0.85rem; color: #a0a0a0; text-align: center; margin-bottom: 5px; line-height: 1.4;">
-        🟠 Track your spending, Secure your future
+        🟠 Track your spending, Secure your future 🟠
         </p>
         <p style="font-size: 0.60rem; color: #a0a0a0; text-align: center; margin-bottom: 15px; line-height: 1.4;">
-        ติดตั้งแอปด้วยการกด 'Add to Home Screen' ก่อนเริ่มใช้งานครั้งแรก
+        ติดตั้งแอปด้วยการกด 'Add to Home Screen' </br> ก่อนเริ่มใช้งานในครั้งแรก
         </p>
         
         <form id="expenseForm">
             <input type="hidden" id="editIndex" value="-1">
-            <div class="form-group"><label>วันที่ค่าใช้จ่ายเกิดขึ้น</label><input type="date" id="date" required></div>
-            <div class="form-group"><label>รายละเอียด</label><input type="text" id="description" placeholder="กรอกรายละเอียด..." required></div>
+            <div class="form-group"><label>วันที่จ่ายเงิน</label><input type="date" id="date" required></div>
+            <div class="form-group"><label>รายละเอียดค่าใช้จ่าย</label><input type="text" id="description" placeholder="กรอกรายละเอียด..." required></div>
             <div class="form-group"><label>จำนวนเงิน (บาท)</label><input type="number" id="amount" placeholder="0.00" step="0.01" required></div>
             <div class="form-group">
-                <label>หมวดหมู่</label>
+                <label>หมวดหมู่ค่าใช้จ่าย</label>
                 <select id="category">
-    <option value="อาหารและเครื่องดื่ม" selected>🍔 อาหารและเครื่องดื่ม</option>
-    <option value="ของทานเล่น/ขนม">🍿 ของทานเล่น/ขนม</option>
-    <option value="วัตถุดิบทำอาหาร">🥬 วัตถุดิบทำอาหาร/ซูเปอร์ฯ</option>
-
-    <option value="ค่าเดินทาง/รถสาธารณะ">🚌 ค่าเดินทาง/รถสาธารณะ</option>
-    <option value="น้ำมันรถ/แก๊ส">⛽ น้ำมันรถ/แก๊ส</option>
-    <option value="ค่าที่จอดรถ/ทางด่วน">🛣️ ค่าที่จอดรถ/ทางด่วน</option>
-    <option value="ซ่อมบำรุงรถ">🔧 ซ่อมบำรุงรถ/เช็คระยะ</option>
-
-    <option value="ของใช้ในบ้าน">🧺 ของใช้ในบ้าน</option>
-    <option value="ค่าเช่า/งวดบ้าน">🏠 ค่าเช่าบ้าน/งวดบ้าน</option>
-    <option value="ค่าน้ำ/ค่าไฟ">⚡ ค่าน้ำ/ค่าไฟ</option>
-    <option value="ค่าโทรศัพท์/อินเทอร์เน็ต">🌐 ค่ามือถือ/อินเทอร์เน็ต</option>
-
-    <option value="ความงาม/สกินแคร์">💄 ความงาม/สกินแคร์</option>
-    <option value="เสื้อผ้า/เครื่องแต่งกาย">👕 เสื้อผ้า/แฟชั่น</option>
-    <option value="สุขภาพ/ค่ายา">💊 สุขภาพ/ค่ายา/หมอ</option>
-    <option value="ฟิตเนส/กีฬา">💪 ฟิตเนส/ออกกำลังกาย</option>
-
-    <option value="บันเทิง/ดูหนัง/เกม">🎮 บันเทิง/ดูหนัง/เกม</option>
-    <option value="ท่องเที่ยว/ที่พัก">✈️ ท่องเที่ยว/ที่พัก</option>
-    <option value="บุญ/บริจาค">🙏 ทำบุญ/บริจาค</option>
-    <option value="ของขวัญ/สังสรรค์">🎁 ของขวัญ/งานสังคม</option>
-    <option value="สัตว์เลี้ยง">🐾 สัตว์เลี้ยง</option>
-
-    <option value="อุปกรณ์ไอที/แกดเจ็ต">💻 อุปกรณ์ไอที/แกดเจ็ต</option>
-    <option value="การศึกษา/หนังสือ">📚 การศึกษา/หนังสือ</option>
-
-    <option value="ภาษี/ประกัน">🛡️ ภาษี/ประกันภัย</option>
-    <option value="งวดรถ/หนี้สิน">🏦 งวดรถ/ชำระหนี้</option>
-    <option value="เงินให้ครอบครัว">👨‍👩‍👧 เงินให้ครอบครัว</option>
-    <option value="ลงทุน/ออมเงิน">📈 ลงทุน/ออมเงิน</option>
-
-    <option value="อื่นๆ">✨ อื่นๆ</option>
-</select>
+                    <option value="อาหารมื้อหลัก" selected>🍛 อาหารมื้อหลัก</option>
+                    <option value="เครื่องดื่ม">☕️ เครื่องดื่ม</option>
+                    <option value="ของทานเล่น/ขนม">🍿 ของทานเล่น/ขนม</option>
+                    <option value="วัตถุดิบทำอาหาร">🥬 วัตถุดิบทำอาหาร/ซูเปอร์ฯ</option>
+                    <option value="ค่าเดินทาง/รถสาธารณะ">🚌 ค่าเดินทาง/รถสาธารณะ</option>
+                    <option value="น้ำมันรถ/แก๊ส">⛽ น้ำมันรถ/แก๊ส</option>
+                    <option value="ค่าที่จอดรถ/ทางด่วน">🛣️ ค่าที่จอดรถ/ทางด่วน</option>
+                    <option value="ซ่อมบำรุงรถ">🔧 ซ่อมบำรุงรถ/เช็คระยะ</option>
+                    <option value="ของใช้ในบ้าน">🧺 ของใช้ในบ้าน</option>
+                    <option value="ค่าเช่า/งวดบ้าน">🏠 ค่าเช่าบ้าน/งวดบ้าน</option>
+                    <option value="ค่าน้ำ/ค่าไฟ">⚡ ค่าน้ำ/ค่าไฟ</option>
+                    <option value="ค่าโทรศัพท์/อินเทอร์เน็ต">🌐 ค่ามือถือ/อินเทอร์เน็ต</option>
+                    <option value="ความงาม/สกินแคร์">💄 ความงาม/สกินแคร์</option>
+                    <option value="เสื้อผ้า/เครื่องแต่งกาย">👕 เสื้อผ้า/แฟชั่น</option>
+                    <option value="สุขภาพ/ค่ายา">💊 สุขภาพ/ค่ายา/หมอ</option>
+                    <option value="ฟิตเนส/กีฬา">💪 ฟิตเนส/ออกกำลังกาย</option>
+                    <option value="บันเทิง/ดูหนัง/เกม">🎮 บันเทิง/ดูหนัง/เกม</option>
+                    <option value="ท่องเที่ยว/ที่พัก">✈️ ท่องเที่ยว/ที่พัก</option>
+                    <option value="บุญ/บริจาค">🙏 ทำบุญ/บริจาค</option>
+                    <option value="ของขวัญ/สังสรรค์">🎁 ของขวัญ/งานสังคม</option>
+                    <option value="สัตว์เลี้ยง">🐾 สัตว์เลี้ยง</option>
+                    <option value="อุปกรณ์ไอที/แกดเจ็ต">💻 อุปกรณ์ไอที/แกดเจ็ต</option>
+                    <option value="การศึกษา/หนังสือ">📚 การศึกษา/หนังสือ</option>
+                    <option value="ภาษี/ประกัน">🛡️ ภาษี/ประกันภัย</option>
+                    <option value="งวดรถ/หนี้สิน">🏦 งวดรถ/ชำระหนี้</option>
+                    <option value="เงินให้ครอบครัว">👨‍👩‍👧 เงินให้ครอบครัว</option>
+                    <option value="ลงทุน/ออมเงิน">📈 ลงทุน/ออมเงิน</option>
+                    <option value="อื่นๆ">✨ อื่นๆ</option>
+                </select>
             </div>
+            
             <div class="form-group">
-                <label>วิธีชำระเงิน</label>
+                <label>วิธีการจ่าย</label>
                 <select id="payment">
                     <option value="เงินสด">เงินสด</option>
                     <option value="โอนเงิน" selected>โอนเงิน / QR</option>
                     <option value="บัตรเครดิต">บัตรเครดิต</option>
                 </select>
             </div>
+
             <div class="form-group">
-                <label>สถานที่</label>
-                <input type="text" id="location" placeholder="พิกัดจะดึงอัตโนมัติ...">
+                <label>สถานที่จ่ายเงิน</label>
+                <input type="text" id="location" placeholder="พิกัดจะถูกดึงอัตโนมัติ...">
                 <span id="locStatus" style="font-size:0.7rem; color:var(--accent)">กำลังดึงพิกัด...</span>
             </div>
+
             <button type="submit" id="submitBtn" class="primary-btn">บันทึกรายการ</button>
-            <button type="button" class="secondary-btn" onclick="showDashboard()">📊 สรุปข้อมูลทั้งหมด</button>
-            <button class="secondary-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe9b6AFKlxdqf4ewHNSWxMk7wUo4hwsBAptpJ8-IbS0hx6P5Q/viewform?usp=header', '_blank')" style="margin-top: 20px; border-style: dashed;">💬 แนะนำ / แจ้งปัญหา</button>
+            <button type="button" class="secondary-btn" onclick="showDashboard()">📊 สรุปค่าใช้จ่าย</button>
+            <button class="secondary-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe9b6AFKlxdqf4ewHNSWxMk7wUo4hwsBAptpJ8-IbS0hx6P5Q/viewform?usp=header', '_blank')" style="margin-top: 20px; border-style: dashed;">💬 Feedback to us</button>
         </form>
     </div>
 
+    <!--Second page for summarize the data, Dashboard section-->
+
     <div id="dashboardSection">
-        <h2>สรุปข้อมูลการใช้เงิน</h2>
+        <h2>Spending Summary</h2>
         
+        <!--Date range box-->
         <div class="filter-container">
-            <label>เลือกช่วงเวลาที่ต้องการดูข้อมูล</label>
+            <label>เลือกช่วงเวลา</label>
             <div class="filter-grid">
-                <div><small style="color:var(--text-dim)">เริ่มจาก</small><input type="date" id="filterStart" onchange="updateDashboard()"></div>
+                <div><small style="color:var(--text-dim)">เริ่มวันที่</small><input type="date" id="filterStart" onchange="updateDashboard()"></div>
                 <div><small style="color:var(--text-dim)">ถึงวันที่</small><input type="date" id="filterEnd" onchange="updateDashboard()"></div>
             </div>
         </div>
 
+        <!--Total amount-->
         <div class="summary-card">
-            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">ยอดใช้จ่ายในช่วงเวลาที่เลือก</h3>
+            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">จำนวนค่าใช้จ่าย</h3>
             <p id="totalAmount">0.00</p>
         </div>
 
-        <h3 class="section-title">สรุปตามหมวดหมู่ (จ่ายมาก → จ่ายน้อย)</h3>
-        <div class="chart-container"><canvas id="expenseChart"></canvas></div>
-        
-        <h3 class="section-title">สถานที่ใช้เงินและจำนวนเงินที่ใช้ <br>(วงยิ่งใหญ่ = จำนวนเงินยิ่งมาก)</h3>
-        <div id="map"></div>
-
-        <h3 class="section-title">รายการบันทึกที่พบ</h3>
-        <div class="history-list" id="historyList"></div>
-
-        <h3 class="section-title">จัดการข้อมูล</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-            <button class="secondary-btn" onclick="exportData()" style="margin-top:0; border-color: #4cd137; color: #4cd137;">📥 สำรองข้อมูล</button>
-            <button class="secondary-btn" onclick="document.getElementById('importFile').click()" style="margin-top:0;">📤 นำเข้าข้อมูล</button>
+        <!--Category section-->
+        <div class="chart-card">
+            <h3 class="section-title">สรุปตามหมวดหมู่ </br>(จ่ายมากสุด → จ่ายน้อยสุด)</h3>
+            <div class="chart-container"><canvas id="expenseChart"></canvas></div>
         </div>
-<input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
 
-        <button class="primary-btn" onclick="showForm()">⬅️ กลับไปหน้าสำหรับบันทึกข้อมูล</button>
+        <!--Category section-->
+        <div class="place-title">
+            <h3 class="section-title">สถานที่ใช้เงินและจำนวนเงินที่ใช้ <br>(ขนาด = จำนวนเงิน)</h3>
+        </div>
+
+        <!--Map section-->
+        <div id="map"></div>
+        
+        <!--list section-->
+        <div class="list-section">
+            <h3 class="section-title">รายการที่บันทึก</h3>
+        </div>
+
+        <!--History lists-->
+        <div class="history-list" id="historyList"></div>
+        
+        <!--Export/Import data section-->
+        <div class="manage-data-section">
+            <h3 class="section-title">จัดการข้อมูล</h3>
+        </div>
+
+        <!--Export Import buttons section-->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <button class="secondary-btn" onclick="exportData()" style="margin-top:0; border-color: #4cd137; color: #4cd137;">📥 Export data</button>
+            <button class="secondary-btn" onclick="document.getElementById('importFile').click()" style="margin-top:0;">📤 Import data</button>
+        </div>
+        
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+
+        <button class="primary-btn" onclick="showForm()">⬅️ กลับหน้าแรก</button>
     </div>
 </div>
 
+<!--------------------------------------------------------------------Script zone---------------------------------------------------------------------------------->
 <script>
     let currentPaymentFilter = 'all'; // ค่า Default เป็นทั้งหมด
     let myChart = null;
@@ -322,7 +353,8 @@
     const today = new Date().toISOString().split('T')[0];
 
     const categoryColors = {
-            "อาหารและเครื่องดื่ม": "#ff9f43",
+            "อาหารมื้อหลัก": "#ff9f43",
+            "เครื่องดื่ม": "#55efc4",
             "ของทานเล่น/ขนม": "#feca57",
             "วัตถุดิบทำอาหาร": "#ff6b6b",
             "ค่าเดินทาง/รถสาธารณะ": "#48dbfb",
@@ -339,7 +371,7 @@
             "ฟิตเนส/กีฬา": "#10ac84",
             "บันเทิง/ดูหนัง/เกม": "#5f27cd",
             "ท่องเที่ยว/ที่พัก": "#00d2d3",
-            "บุญ/บริจาค": "#ff9f43",
+            "บุญ/บริจาค": "#00d2d3",
             "ของขวัญ/สังสรรค์": "#ff6b6b",
             "สัตว์เลี้ยง": "#54a0ff",
             "อุปกรณ์ไอที/แกดเจ็ต": "#2e86de",
@@ -379,12 +411,14 @@
     function initForm() {
         document.getElementById('date').value = today;
         document.getElementById('editIndex').value = "-1";
-        document.getElementById('submitBtn').innerText = "บันทึกรายการนี้";
+        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
         document.getElementById('editNotice').style.display = "none";
+        
+        //Pulling latitude and longtitude automatically
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((p) => {
                 document.getElementById('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
-                document.getElementById('locStatus').innerText = "ดึงพิกัดสำเร็จ";
+                document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
             });
         }
     }
@@ -396,7 +430,7 @@
 
         const filtered = expenses.filter(item => item.date >= start && item.date <= end);
         const total = filtered.reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " ฿";
+        document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " THB";
 
         const categoryData = {};
         filtered.forEach(item => {
@@ -468,7 +502,7 @@
         });
     }
 
-    // ส่วนหัวใจหลักของคำขอใหม่: แผนที่วงกลม
+    // หัวใจหลัก แผนที่วงกลม
     function updateMap(data) {
         markers.forEach(m => map.removeLayer(m));
         markers = [];
@@ -495,7 +529,7 @@
                         opacity: 0.8,
                         fillOpacity: 0.5
                     }).addTo(map)
-                    .bindPopup(`<b>${item.description}</b><br>หมวดหมู่: ${item.category}<br>จำนวน: ${amount.toLocaleString()} ฿`);
+                    .bindPopup(`<b>${item.description}</b><br>หมวดหมู่: ${item.category}<br>จำนวน: ${amount.toLocaleString()} THB`);
                     
                     markers.push(circle);
                     coordsFound.push([lat, lng]);
@@ -508,7 +542,8 @@
             map.fitBounds(bounds, { padding: [40, 40] });
         }
     }
-
+    
+    // ฟังก์ชั่นลบข้อมูลที่บันทึกไปแล้ว
     function deleteExpense(index) {
         if (confirm("ต้องการลบใช่หรือไม่?")) {
             let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -518,6 +553,7 @@
         }
     }
 
+    // ฟังก์ชั่นแก้ไขข้อมูลที่บันทึกไปแล้ว
     function editExpense(index) {
         const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
         const item = expenses[index];
@@ -556,42 +592,42 @@
     window.onload = initForm;
 
     // ฟังก์ชันส่งออกข้อมูลเป็นไฟล์ JSON
-function exportData() {
-    const data = localStorage.getItem("expenses") || "[]";
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    const timestamp = new Date().toISOString().split('T')[0];
-    a.href = url;
-    a.download = `moniday-backup-${timestamp}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
+    function exportData() {
+        const data = localStorage.getItem("expenses") || "[]";
+        const blob = new Blob([data], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const timestamp = new Date().toISOString().split('T')[0];
+        a.href = url;
+        a.download = `moniday-backup-${timestamp}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 
-// ฟังก์ชันนำเข้าข้อมูลจากไฟล์
-function importData(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    // ฟังก์ชันนำเข้าข้อมูลจากไฟล์ JSON
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const importedData = JSON.parse(e.target.result);
-            if (Array.isArray(importedData)) {
-                if (confirm("ต้องการนำเข้าข้อมูลใช่ไหม? ข้อมูลเดิมในเครื่องนี้จะถูกแทนที่ด้วยข้อมูลใหม่")) {
-                    localStorage.setItem("expenses", JSON.stringify(importedData));
-                    alert("นำเข้าข้อมูลสำเร็จ ✨");
-                    updateDashboard(); // รีเฟรชหน้าจอ
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if (confirm("ต้องการนำเข้าข้อมูลใช่ไหม? ข้อมูลเดิมในเครื่องนี้จะถูกแทนที่ด้วยข้อมูลใหม่")) {
+                        localStorage.setItem("expenses", JSON.stringify(importedData));
+                        alert("นำเข้าข้อมูลสำเร็จ ✨");
+                        updateDashboard(); // รีเฟรชหน้าจอ
+                    }
+                } else {
+                    alert("รูปแบบไฟล์ไม่ถูกต้อง");
                 }
-            } else {
-                alert("รูปแบบไฟล์ไม่ถูกต้อง");
+            } catch (err) {
+                alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
             }
-        } catch (err) {
-            alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
-        }
-    };
-    reader.readAsText(file);
-}
+        };
+        reader.readAsText(file);
+    }
 </script>
 
 </body>
