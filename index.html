@@ -182,6 +182,36 @@
         }
 
         .action-btns { margin-top: 8px; display: flex; gap: 8px; }
+        /* Payment Filter Buttons */
+        .payment-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .payment-filter button {
+            padding: 8px 13px;
+            background: var(--input-bg);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-filter button.active {
+            background: var(--accent);
+            color: #121212;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .payment-filter button:hover {
+            border-color: var(--accent);
+        }
 
         .edit-btn, .delete-btn {
             background: transparent;
@@ -190,6 +220,7 @@
             font-size: 0.65rem;
             cursor: pointer;
         }
+
         .edit-btn { color: var(--accent); border: 1px solid var(--accent); }
         .delete-btn { color: var(--error); border: 1px solid var(--error); }
 
@@ -212,7 +243,8 @@
 
 <div class="container">
 
-    <!--First page for input the data-->
+    <!--First page-->
+    <!--Payment Method Filter-->
     <div id="formSection">
         <div id="editNotice" class="editing-mode">
             <small style="color: var(--accent)">⚠️ กำลังอยู่ในโหมดแก้ไขรายการที่บันทึกไปแล้ว..</small>
@@ -221,7 +253,7 @@
         <p style="font-size: 0.85rem; color: #a0a0a0; text-align: center; margin-bottom: 5px; line-height: 1.4;">
         Track your spending, Secure your future
         </p>
-        <p style="font-size: 0.60rem; color: #a0a0a0; text-align: center; margin-bottom: 15px; line-height: 1.4;">
+        <p style="font-size: 0.75rem; color: #a0a0a0; text-align: center; margin-bottom: 15px; line-height: 1.5;">
         ติดตั้งแอปด้วยการกด 'Add to Home Screen' </br> ก่อนเริ่มใช้งานในครั้งแรก
         </p>
         
@@ -284,9 +316,9 @@
             <button class="secondary-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe9b6AFKlxdqf4ewHNSWxMk7wUo4hwsBAptpJ8-IbS0hx6P5Q/viewform?usp=header', '_blank')" style="margin-top: 20px; border-style: dashed;">💬 Feedback Us</button>
         </form>
     </div>
-
-    <!--Second page for summarize the data, Dashboard section-->
-
+    
+    <!--Second page - Dashboard section-->
+    
     <div id="dashboardSection">
         <h2>Spending Summary</h2>
         
@@ -297,6 +329,14 @@
                 <div><small style="color:var(--text-dim)">เริ่มวันที่</small><input type="date" id="filterStart" onchange="updateDashboard()"></div>
                 <div><small style="color:var(--text-dim)">ถึงวันที่</small><input type="date" id="filterEnd" onchange="updateDashboard()"></div>
             </div>
+        </div>
+
+        <!--Payment method selection-->
+        <div class="payment-filter">
+            <button class="active" onclick="filterByPayment('all')" selected>🌟 ทั้งหมด</button>
+            <button onclick="filterByPayment('เงินสด')">💵 เงินสด</button>
+            <button onclick="filterByPayment('โอนเงิน')">📱 โอนเงิน</button>
+            <button onclick="filterByPayment('บัตรเครดิต')">💳 บัตรเครดิต</button>
         </div>
 
         <!--Total amount-->
@@ -317,22 +357,23 @@
         </div>
 
         <!--Map section-->
-        <div id="map"></div>
+        <div id="map">
+        </div>
         
-        <!--list section-->
+        <!--List section-->
         <div class="list-section">
             <h3 class="section-title">รายการที่บันทึก</h3>
         </div>
 
-        <!--History lists-->
+        <!--History recorded lists-->
         <div class="history-list" id="historyList"></div>
         
-        <!--Export/Import data section-->
+        <!--Export and import section-->
         <div class="manage-data-section">
             <h3 class="section-title">จัดการข้อมูล</h3>
         </div>
 
-        <!--Export Import buttons section-->
+        <!--Export and Import buttons section-->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
             <button class="secondary-btn" onclick="exportData()" style="margin-top:0; border-color: #4cd137; color: #4cd137;">📥 Export data</button>
             <button class="secondary-btn" onclick="document.getElementById('importFile').click()" style="margin-top:0;">📤 Import data</button>
@@ -346,7 +387,22 @@
 
 <!--------------------------------------------------------------------Script zone---------------------------------------------------------------------------------->
 <script>
-    let currentPaymentFilter = 'all'; // ค่า Default เป็นทั้งหมด
+    let currentPaymentFilter = 'all'; // ให้ค่า Default เป็นทั้งหมด
+    
+    // ฟังก์ชั่นสำหรับฟิลเตอร์ตามวิธีการจ่าย
+    function filterByPayment(method) {
+        currentPaymentFilter = method;
+        
+        // เปลี่ยนสถานะปุ่ม active
+        document.querySelectorAll('.payment-filter button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // อัปเดตข้อมูลใหม่
+        updateDashboard();
+    }
+
     let myChart = null;
     let map = null;
     let markers = []; // ในกรณีนี้จะเก็บ CircleMarker
@@ -428,7 +484,13 @@
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
 
-        const filtered = expenses.filter(item => item.date >= start && item.date <= end);
+        // กรองตามวันที่ก่อน
+        let filtered = expenses.filter(item => item.date >= start && item.date <= end);
+
+        // จากนั้นกรองตามวิธีการจ่ายเงิน
+        if (currentPaymentFilter !== 'all') {
+            filtered = filtered.filter(item => item.payment === currentPaymentFilter);
+        }
         const total = filtered.reduce((sum, item) => sum + parseFloat(item.amount), 0);
         document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " THB";
 
@@ -502,7 +564,7 @@
         });
     }
 
-    // หัวใจหลัก แผนที่วงกลม
+    // ฟังก์ชั่นแสดงแผนที่วงกลม
     function updateMap(data) {
         markers.forEach(m => map.removeLayer(m));
         markers = [];
@@ -543,7 +605,7 @@
         }
     }
     
-    // ฟังก์ชั่นลบข้อมูลที่บันทึกไปแล้ว
+    // ฟังก์ชั่น ลบ ข้อมูลที่บันทึกไปแล้ว
     function deleteExpense(index) {
         if (confirm("ต้องการลบใช่หรือไม่?")) {
             let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -553,7 +615,7 @@
         }
     }
 
-    // ฟังก์ชั่นแก้ไขข้อมูลที่บันทึกไปแล้ว
+    // ฟังก์ชั่น แก้ไข ข้อมูลที่บันทึกไปแล้ว
     function editExpense(index) {
         const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
         const item = expenses[index];
