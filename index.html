@@ -259,7 +259,15 @@
         
         <form id="expenseForm">
             <input type="hidden" id="editIndex" value="-1">
-            <div class="form-group"><label>วันที่จ่ายเงิน</label><input type="date" id="date" required></div>
+            <div class="form-group">
+                <label>วันที่จ่ายเงิน</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label>เวลาที่บันทึก</label>
+                <input type="time" id="time" required readonly style="cursor: not-allowed; opacity: 0.8;">
+                <small style="font-size:0.7rem; color:var(--text-dim); display:block; margin-top:5px;">⏰ ดึงเวลาอัตโนมัติจากระบบ</small>
+            </div>
             <div class="form-group"><label>รายละเอียดค่าใช้จ่าย</label><input type="text" id="description" placeholder="กรอกรายละเอียด..." required></div>
             <div class="form-group"><label>จำนวนเงิน (บาท)</label><input type="number" id="amount" placeholder="0.00" step="0.01" required></div>
             <div class="form-group">
@@ -465,19 +473,27 @@
     }
 
     function initForm() {
-        document.getElementById('date').value = today;
-        document.getElementById('editIndex').value = "-1";
-        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
-        document.getElementById('editNotice').style.display = "none";
-        
-        //Pulling latitude and longtitude automatically
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((p) => {
-                document.getElementById('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
-                document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
-            });
-        }
+    // ตั้งค่าวันที่
+    document.getElementById('date').value = today;
+    
+    // ดึงเวลาปัจจุบันในรูปแบบ 24 ชั่วโมง (HH:MM)
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('time').value = `${hours}:${minutes}`;
+    
+    document.getElementById('editIndex').value = "-1";
+    document.getElementById('submitBtn').innerText = "บันทึกรายการ";
+    document.getElementById('editNotice').style.display = "none";
+    
+    //Pulling latitude and longtitude automatically
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((p) => {
+            document.getElementById('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
+            document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
+        });
     }
+}
 
     function updateDashboard() {
         const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -514,16 +530,16 @@
             const div = document.createElement('div');
             div.className = 'history-item';
             div.innerHTML = `
-                <div>
-                    <strong>${item.description}</strong><br>
-                    <small style="color:var(--text-dim)">${item.date} | ${item.category}</small><br>
-                    <div class="action-btns">
-                        <button class="edit-btn" onclick="editExpense(${originalIndex})">✏️</button>
-                        <button class="delete-btn" onclick="deleteExpense(${originalIndex})">🗑️</button>
-                    </div>
-                </div>
-                <div class="amount-text">-${parseFloat(item.amount).toFixed(2)}</div>
-            `;
+                            <div>
+                                <strong>${item.description}</strong><br>
+                                <small style="color:var(--text-dim)">${item.date} ${item.time || ''} | ${item.category}</small><br>
+                                <div class="action-btns">
+                                    <button class="edit-btn" onclick="editExpense(${originalIndex})">✏️</button>
+                                    <button class="delete-btn" onclick="deleteExpense(${originalIndex})">🗑️</button>
+                                </div>
+                            </div>
+                            <div class="amount-text">-${parseFloat(item.amount).toFixed(2)}</div>
+                        `;
             listContainer.appendChild(div);
         });
     }
@@ -591,7 +607,7 @@
                         opacity: 0.8,
                         fillOpacity: 0.5
                     }).addTo(map)
-                    .bindPopup(`<b>${item.description}</b><br>หมวดหมู่: ${item.category}<br>จำนวน: ${amount.toLocaleString()} THB`);
+                    .bindPopup(`<b>${item.description}</b><br>วันที่: ${item.date} ${item.time || ''}<br>หมวดหมู่: ${item.category}<br>จำนวน: ${amount.toLocaleString()} THB`);
                     
                     markers.push(circle);
                     coordsFound.push([lat, lng]);
@@ -617,31 +633,33 @@
 
     // ฟังก์ชั่น แก้ไข ข้อมูลที่บันทึกไปแล้ว
     function editExpense(index) {
-        const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-        const item = expenses[index];
-        document.getElementById('date').value = item.date;
-        document.getElementById('description').value = item.description;
-        document.getElementById('amount').value = item.amount;
-        document.getElementById('category').value = item.category;
-        document.getElementById('payment').value = item.payment;
-        document.getElementById('location').value = item.location;
-        document.getElementById('editIndex').value = index;
-        document.getElementById('submitBtn').innerText = "อัปเดตรายการ";
-        document.getElementById('editNotice').style.display = "block";
-        showForm();
-    }
+            const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            const item = expenses[index];
+            document.getElementById('date').value = item.date;
+            document.getElementById('time').value = item.time || '00:00';  // เพิ่มบรรทัดนี้
+            document.getElementById('description').value = item.description;
+            document.getElementById('amount').value = item.amount;
+            document.getElementById('category').value = item.category;
+            document.getElementById('payment').value = item.payment;
+            document.getElementById('location').value = item.location;
+            document.getElementById('editIndex').value = index;
+            document.getElementById('submitBtn').innerText = "อัปเดตรายการ";
+            document.getElementById('editNotice').style.display = "block";
+            showForm();
+        }
 
     document.getElementById("expenseForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const index = parseInt(document.getElementById('editIndex').value);
-        const expense = {
-            date: document.getElementById("date").value,
-            description: document.getElementById("description").value,
-            amount: document.getElementById("amount").value,
-            category: document.getElementById("category").value,
-            payment: document.getElementById("payment").value,
-            location: document.getElementById("location").value
-        };
+            e.preventDefault();
+            const index = parseInt(document.getElementById('editIndex').value);
+            const expense = {
+                date: document.getElementById("date").value,
+                time: document.getElementById("time").value,  // เพิ่มบรรทัดนี้
+                description: document.getElementById("description").value,
+                amount: document.getElementById("amount").value,
+                category: document.getElementById("category").value,
+                payment: document.getElementById("payment").value,
+                location: document.getElementById("location").value
+            };
         let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
         if (index === -1) expenses.push(expense);
         else expenses[index] = expense;
