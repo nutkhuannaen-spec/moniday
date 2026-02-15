@@ -1,198 +1,291 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <!-- ===================================== META TAGS & SETUP ===================================== -->
+    <!-- Favicon: ไอคอนที่แสดงบน tab browser -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22> <text y=%22.9em%22 font-size=%2290%22> 💸</text> </svg>">
+    
+    <!-- PWA Setup: ตั้งค่าให้แอปทำงานแบบ Progressive Web App (ติดตั้งได้บนมือถือ) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Character Encoding: กำหนดให้รองรับภาษาไทยและภาษาอื่นๆ -->
     <meta charset="UTF-8">
+    
+    <!-- Responsive Design: ให้แอปปรับขนาดตามหน้าจอ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page Title -->
     <title>MoniDay - Your Daily Spending Tracker</title>
     
+    <!-- ===================================== EXTERNAL LIBRARIES ===================================== -->
+    <!-- Google Fonts: โหลด font Inter และ Sarabun สำหรับใช้ในแอป -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js: ไลบรารีสำหรับสร้างกราฟแท่ง -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Leaflet: ไลบรารีสำหรับแสดงแผนที่ -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <!-- Icon's image when it show on homescreen -->
+    <!-- App Icons: ไอคอนเมื่อติดตั้งบนหน้าจอมือถือ -->
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="/Users/nutkhuannaen/Desktop/Moni Day/moniday/moniday/icon.png">
-    <!-- Until this line -->
 
+    <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!---------------------------------------------------------------------------CSS Zone------------------------------------------------------------------------------>
+<!-- ========================================= CSS ZONE ========================================= -->
     <style>
+        /* ==================== 1. CSS VARIABLES (ตัวแปรสี) ==================== */
+        /* กำหนดสีหลักของแอปไว้ในตัวแปร เพื่อให้เปลี่ยนสีได้ง่าย */
         :root {
-            --bg-body: #121212;
-            --bg-card: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-dim: #a0a0a0;
-            --accent: #bb86fc;
-            --input-bg: #2d2d2d;
-            --border: #333333;
-            --error: #cf6679;
+            --bg-body: #121212;        /* สีพื้นหลังหลัก (ดำเข้ม) */
+            --bg-card: #1e1e1e;        /* สีพื้นหลัง card (เทาเข้ม) */
+            --text-main: #e0e0e0;      /* สีตัวอักษรหลัก (ขาวนวล) */
+            --text-dim: #a0a0a0;       /* สีตัวอักษรรอง (เทาอ่อน) */
+            --accent: #bb86fc;         /* สีเน้น (ม่วง) */
+            --input-bg: #2d2d2d;       /* สีพื้นหลัง input (เทากลาง) */
+            --border: #333333;         /* สีเส้นขอบ */
+            --error: #cf6679;          /* สีแจ้งเตือน/ลบ (แดง) */
         }
 
+        /* ==================== 2. GLOBAL STYLES (สไตล์พื้นฐาน) ==================== */
         body {
-            font-family: 'Inter', 'Sarabun', sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', 'Sarabun', sans-serif;  /* กำหนด font */
+            background-color: var(--bg-body);              /* ใช้สีจากตัวแปร */
             color: var(--text-main);
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            display: flex;              /* ใช้ flexbox เพื่อจัดวาง */
+            justify-content: center;    /* จัดกึ่งกลางแนวนอน */
+            align-items: center;        /* จัดกึ่งกลางแนวตั้ง */
+            min-height: 100vh;          /* ความสูงขั้นต่ำเต็มจอ */
             padding: 20px;
         }
 
+        /* Container หลัก: กล่องใหญ่ที่บรรจุทั้งแอป */
         .container {
             background: var(--bg-card);
             width: 100%;
-            max-width: 400px;
-            padding: 30px;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            max-width: 420px;           /* ความกว้างสูงสุด */
+            padding: 35px;              /* ระยะห่างด้านใน */
+            border-radius: 28px;        /* มุมโค้ง */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);  /* เงา */
             border: 1px solid var(--border);
             position: relative;
         }
 
-        h2 { font-weight: 500; margin-bottom: 10px; color: #ffffff; font-size: 1.25rem; text-align: center; }
-        h3.section-title { font-size: 0.9rem; color: var(--text-dim); margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+        /* ==================== 3. TYPOGRAPHY (ตัวอักษร) ==================== */
+        h2 { 
+            font-weight: 500; 
+            margin-bottom: 8px; 
+            color: #ffffff; 
+            font-size: 1.3rem; 
+            text-align: center; 
+        }
+        
+        /* หัวข้อแต่ละ section */
+        h3.section-title { 
+            font-size: 0.85rem; 
+            color: var(--text-dim); 
+            margin: 30px 0 15px; 
+            text-transform: uppercase;      /* ตัวพิมพ์ใหญ่ทั้งหมด */
+            letter-spacing: 1.2px;          /* ระยะห่างระหว่างตัวอักษร */
+        }
 
-        .form-group { margin-bottom: 18px; }
+        /* ==================== 4. FORM ELEMENTS (ฟอร์มกรอกข้อมูล) ==================== */
+        .form-group { 
+            margin-bottom: 22px;  /* ระยะห่างระหว่างแต่ละฟิลด์ */
+        }
 
+        /* Label สำหรับแต่ละฟิลด์ */
         label {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             color: var(--text-dim);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: block;
         }
 
+        /* Input และ Select: ช่องกรอกข้อมูล */
         input, select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             background-color: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
             font-size: 0.95rem;
             color: var(--text-main);
-            box-sizing: border-box;
-            outline: none;
+            box-sizing: border-box;      /* นับ padding ในความกว้าง */
+            outline: none;               /* ไม่แสดงขอบเมื่อ focus */
+            transition: border-color 0.2s;  /* แอนิเมชั่นเปลี่ยนสีขอบ */
         }
 
-        input:focus, select:focus { border-color: var(--accent); }
+        /* เมื่อคลิกที่ input: เปลี่ยนสีขอบเป็นสีเน้น */
+        input:focus, select:focus { 
+            border-color: var(--accent); 
+        }
 
+        /* ==================== 5. FILTER SECTION (ส่วนฟิลเตอร์) ==================== */
+        /* กล่องสำหรับเลือกวันที่ */
         .filter-container {
-            background: rgba(255,255,255,0.03);
-            padding: 15px;
+            background: rgba(255,255,255,0.03);  /* สีขาวโปร่งแสง 3% */
+            padding: 18px;
             border-radius: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid var(--border);
             text-align: center;
         }
 
+        /* Grid 2 คอลัมน์สำหรับวันที่เริ่มต้น-สิ้นสุด */
         .filter-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1fr 1fr;  /* แบ่งครึ่ง */
+            gap: 12px;                       /* ระยะห่างระหว่างคอลัมน์ */
             justify-items: center;
         }
 
-        .filter-grid small { display: block; text-align: center; margin-bottom: 5px; }
-        .filter-grid input { text-align: center; }
+        .filter-grid small { 
+            display: block; 
+            text-align: center; 
+            margin-bottom: 8px;
+            font-size: 0.7rem;
+        }
+        
+        .filter-grid input { 
+            text-align: center; 
+        }
 
+        /* ==================== 6. BUTTONS (ปุ่มต่างๆ) ==================== */
+        /* ปุ่มหลัก: สีม่วงโดดเด่น */
         button.primary-btn {
             width: 100%;
-            padding: 14px;
-            margin-top: 10px;
+            padding: 15px;
+            margin-top: 15px;
             background: var(--accent);
-            color: #121212;
+            color: #121212;              /* ตัวอักษรสีเข้มบนพื้นสว่าง */
             border: none;
             border-radius: 12px;
             font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+            font-size: 0.95rem;
+            cursor: pointer;             /* แสดงมือชี้เมื่อ hover */
+            transition: transform 0.2s, opacity 0.2s;
         }
 
+        /* เมื่อ hover ปุ่มหลัก: ยกขึ้นเล็กน้อย */
+        button.primary-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        /* ปุ่มรอง: โปร่งใส มีแค่ขอบ */
         .secondary-btn {
             width: 100%;
-            padding: 12px;
-            margin-top: 12px;
+            padding: 13px;
+            margin-top: 15px;
             background: transparent;
             color: var(--accent);
             border: 1px solid var(--accent);
             border-radius: 12px;
             font-weight: 500;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
-        #dashboardSection { display: none; }
+        /* เมื่อ hover ปุ่มรอง: เพิ่มพื้นหลังโปร่งแสง */
+        .secondary-btn:hover {
+            background: rgba(187, 134, 252, 0.1);
+        }
 
+        /* ==================== 7. DASHBOARD SECTION (หน้าสรุป) ==================== */
+        /* ซ่อนหน้า dashboard ตอนเริ่มต้น */
+        #dashboardSection { 
+            display: none; 
+        }
+
+        /* Card แสดงสรุปตัวเลข */
         .summary-card {
             background: var(--input-bg);
-            padding: 20px;
+            padding: 18px;
             border-radius: 16px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid var(--border);
         }
 
+        /* จัดกลุ่ม card ต่างๆ */
         .chart-card, .place-title, .list-section, .manage-data-section {
             max-width: 600px;
             margin: 0 auto;
             text-align: center;
         }
-        .summary-card p { margin: 8px 0 0; font-size: 1.8rem; font-weight: 600; color: var(--accent); }
+        
+        /* ตัวเลขใน summary card */
+        .summary-card p { 
+            margin: 8px 0 0; 
+            font-size: 1.7rem; 
+            font-weight: 600; 
+            color: var(--accent); 
+        }
 
+        /* ==================== 8. CHART SECTION (กราฟ) ==================== */
         .chart-container {
             position: relative;
-            margin: 10px 0 20px;
-            height: 250px;
+            margin: 15px 0 25px;
+            height: 250px;          /* ความสูงของกราฟ */
             width: 100%;
         }
 
-        /* Map Style */
+        /* ==================== 9. MAP SECTION (แผนที่) ==================== */
         #map {
-            height: 200px;
+            height: 220px;
             width: 100%;
             border-radius: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             border: 1px solid var(--border);
-            z-index: 1;
+            z-index: 1;             /* ให้แผนที่อยู่ชั้นบนสุด */
             background: #121212;
         }
 
+        /* ==================== 10. HISTORY LIST (รายการที่บันทึก) ==================== */
+        /* กล่องที่บรรจุรายการทั้งหมด - สามารถเลื่อนได้ */
         .history-list {
-            max-height: 180px;
-            overflow-y: auto;
-            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;       /* เลื่อนแนวตั้งได้ */
+            margin-top: 10px;
         }
 
+        /* แต่ละรายการในประวัติ */
         .history-item {
-            padding: 10px 0;
+            padding: 14px 0;
             border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between;  /* จัดชิดซ้าย-ขวา */
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
-        .action-btns { margin-top: 8px; display: flex; gap: 8px; }
-        /* Payment Filter Buttons */
+        /* กลุ่มปุ่ม แก้ไข/ลบ */
+        .action-btns { 
+            margin-top: 10px; 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        /* ==================== 11. FILTER BUTTONS (ปุ่มกรอง) ==================== */
         .payment-filter {
             display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;        /* ขึ้นบรรทัดใหม่ถ้าไม่พอ */
             justify-content: center;
         }
 
         .payment-filter button {
-            padding: 8px 13px;
+            padding: 10px 16px;
             background: var(--input-bg);
             color: var(--text-dim);
             border: 1px solid var(--border);
@@ -202,6 +295,7 @@
             transition: all 0.2s;
         }
 
+        /* ปุ่มที่ถูกเลือก */
         .payment-filter button.active {
             background: var(--accent);
             color: #121212;
@@ -213,103 +307,235 @@
             border-color: var(--accent);
         }
 
+        /* ==================== 12. ACTION BUTTONS (ปุ่มแก้ไข/ลบ) ==================== */
         .edit-btn, .delete-btn {
             background: transparent;
-            padding: 3px 8px;
+            padding: 5px 10px;
             border-radius: 6px;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .edit-btn { color: var(--accent); border: 1px solid var(--accent); }
-        .delete-btn { color: var(--error); border: 1px solid var(--error); }
+        /* ปุ่มแก้ไข: สีม่วง */
+        .edit-btn { 
+            color: var(--accent); 
+            border: 1px solid var(--accent); 
+        }
+        
+        .edit-btn:hover {
+            background: rgba(187, 134, 252, 0.1);
+        }
+        
+        /* ปุ่มลบ: สีแดง */
+        .delete-btn { 
+            color: var(--error); 
+            border: 1px solid var(--error); 
+        }
+        
+        .delete-btn:hover {
+            background: rgba(207, 102, 121, 0.1);
+        }
 
-        .amount-text { color: var(--accent); font-weight: 600; }
+        .amount-text { 
+            color: var(--accent); 
+            font-weight: 600; 
+        }
 
+        /* ==================== 13. EDITING MODE (โหมดแก้ไข) ==================== */
+        /* แถบแจ้งเตือนว่ากำลังแก้ไขรายการ */
         .editing-mode {
             background: rgba(187, 134, 252, 0.05);
             border: 1px dashed var(--accent);
-            padding: 10px;
+            padding: 12px;
             border-radius: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
-            display: none;
+            display: none;          /* ซ่อนไว้ตอนเริ่มต้น */
+        }
+
+        /* ==================== 14. QUICK DATE BUTTONS (ปุ่มเลือกวันด่วน) ==================== */
+        .quick-date-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .quick-date-btns button {
+            padding: 10px 14px;
+            margin: 0;
+            font-size: 0.8rem;
+            flex: 1;                /* แบ่งพื้นที่เท่าๆ กัน */
+        }
+
+        /* ==================== 15. STATISTICS GRID (สถิติ 3 ช่อง) ==================== */
+        .stats-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr;  /* 3 คอลัมน์เท่าๆ กัน */
+            gap: 8px; 
+            margin-bottom: 25px;
+        }
+
+        .stats-grid .summary-card {
+            padding: 12px 8px;
+            margin-bottom: 0;
+        }
+
+        .stats-grid .summary-card h3 {
+            font-size: 0.65rem;
+            margin: 0;
+            color: var(--text-dim);
+        }
+
+        .stats-grid .summary-card p {
+            font-size: 1rem;
+            margin: 5px 0 0;
+        }
+
+        /* ==================== 16. FINANCE SUMMARY (สรุปการเงิน) ==================== */
+        /* Grid 2 คอลัมน์สำหรับรายรับ-รายจ่าย */
+        .finance-summary {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            margin-bottom: 15px;
+        }
+
+        .finance-summary .summary-card {
+            margin-bottom: 0;
         }
     </style>
 </head>
 
-<!-------------------------------------------------------------------------------HTML Zone-------------------------------------------------------------------------->
+<!-- ========================================= HTML ZONE ========================================= -->
 <body>
 
 <div class="container">
 
-    <!--First page-->
-    <!--Payment Method Filter-->
+    <!-- ===================================== SECTION 1: FORM PAGE (หน้ากรอกข้อมูล) ===================================== -->
+    <!-- หน้านี้จะแสดงตอนเปิดแอปครั้งแรก ใช้สำหรับบันทึกรายรับ-รายจ่าย -->
     <div id="formSection">
+        
+        <!-- แถบแจ้งเตือนเมื่ออยู่ในโหมดแก้ไข (ซ่อนไว้ตอนปกติ) -->
         <div id="editNotice" class="editing-mode">
             <small style="color: var(--accent)">⚠️ กำลังอยู่ในโหมดแก้ไขรายการที่บันทึกไปแล้ว..</small>
         </div>
+        
+        <!-- ชื่อแอป -->
         <h2 id="formTitle">MoniDay</h2>
-        <p style="font-size: 0.75rem; color: #a0a0a0; text-align: center; margin-bottom: 5px; line-height: 1.4;">
+        <p style="font-size: 0.75rem; color: #a0a0a0; text-align: center; margin-bottom: 8px; line-height: 1.5;">
         <i>Track your spending, Secure your future</i>
         </p>
-        <p style="font-size: 0.55rem; color: #a0a0a0; text-align: center; margin-bottom: 15px; line-height: 1.7;">
+        <p style="font-size: 0.6rem; color: #a0a0a0; text-align: center; margin-bottom: 20px; line-height: 1.6;">
         ติดตั้งแอปด้วยการกด 'Add to Home Screen' ก่อนเริ่มใช้งานในครั้งแรก
         </p>
         
+        <!-- ฟอร์มบันทึกรายการ -->
         <form id="expenseForm">
+            <!-- Hidden input: เก็บ index สำหรับการแก้ไข (-1 = สร้างใหม่) -->
             <input type="hidden" id="editIndex" value="-1">
+            
+            <!-- GROUP 1: วันที่และเวลา -->
             <div class="form-group">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div>
-                        <label style="margin-bottom: 6px;">วันที่จ่าย</label>
+                        <label style="margin-bottom: 8px;">วันที่รับ-จ่าย</label>
                         <input type="date" id="date" required>
                     </div>
                     <div>
-                        <label style="margin-bottom: 6px;">เวลาที่จ่าย</label>
+                        <label style="margin-bottom: 8px;">เวลาที่รับ-จ่าย</label>
+                        <!-- readonly: ไม่ให้แก้ไข เพราะดึงจากระบบอัตโนมัติ -->
                         <input type="time" id="time" required readonly style="cursor: not-allowed; opacity: 0.8;">
                     </div>
                 </div>
-                <small style="font-size:0.7rem; color:var(--text-dim); display:block; margin-top:5px;">⏰ วันและเวลาดึงอัตโนมัติจากระบบ</small>
+                <small style="font-size:0.7rem; color:var(--text-dim); display:block; margin-top:8px;">⏰ วันและเวลาดึงอัตโนมัติจากระบบ</small>
             </div>
-            <div class="form-group"><label>รายละเอียดค่าใช้จ่าย</label><input type="text" id="description" placeholder="กรอกรายละเอียด..." required></div>
-            <div class="form-group"><label>จำนวนเงิน (บาท)</label><input type="number" id="amount" placeholder="0.00" step="0.01" required></div>
+            
+            <!-- GROUP 2: ประเภทรายการ (รายรับ/รายจ่าย) -->
             <div class="form-group">
-                <label>หมวดหมู่ค่าใช้จ่าย</label>
+                <label>ประเภทรายการ</label>
+                <!-- onchange: เมื่อเปลี่ยนค่า จะเรียกฟังก์ชัน updateCategoryOptions() -->
+                <select id="transactionType" onchange="updateCategoryOptions()">
+                    <option value="expense">💸เงินออก</option>
+                    <option value="income">💰เงินเข้า</option>
+                </select>
+            </div>   
+            
+            <!-- GROUP 3: รายละเอียด -->
+            <div class="form-group">
+                <label>รายละเอียดเงินเข้า-เงินออก</label>
+                <input type="text" id="description" placeholder="กรอกรายละเอียด..." required>
+            </div>
+            
+            <!-- GROUP 4: จำนวนเงิน -->
+            <div class="form-group">
+                <label>จำนวนเงิน (บาท)</label>
+                <!-- step="0.01": รองรับทศนิยม 2 ตำแหน่ง (สตางค์) -->
+                <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+            </div>
+            
+            <!-- GROUP 5: หมวดหมู่ -->
+            <div class="form-group">
+                <label id="categoryLabel">หมวดหมู่ค่าใช้จ่าย</label>
                 <select id="category">
-                    <option value="อาหารมื้อหลัก" selected>🍛 อาหารมื้อหลัก</option>
-                    <option value="เครื่องดื่ม">☕️ เครื่องดื่ม</option>
-                    <option value="ของทานเล่น/ขนม">🍿 ของทานเล่น/ขนม</option>
-                    <option value="วัตถุดิบทำอาหาร">🥬 วัตถุดิบทำอาหาร/ซูเปอร์ฯ</option>
-                    <option value="ค่าเดินทาง/รถสาธารณะ">🚌 ค่าเดินทาง/รถสาธารณะ</option>
-                    <option value="น้ำมันรถ/แก๊ส">⛽ น้ำมันรถ/แก๊ส</option>
-                    <option value="ค่าที่จอดรถ/ทางด่วน">🛣️ ค่าที่จอดรถ/ทางด่วน</option>
-                    <option value="ซ่อมบำรุงรถ">🔧 ซ่อมบำรุงรถ/เช็คระยะ</option>
-                    <option value="ของใช้ในบ้าน">🧺 ของใช้ในบ้าน</option>
-                    <option value="ค่าเช่า/งวดบ้าน">🏠 ค่าเช่าบ้าน/งวดบ้าน</option>
-                    <option value="ค่าน้ำ/ค่าไฟ">⚡ ค่าน้ำ/ค่าไฟ</option>
-                    <option value="ค่าโทรศัพท์/อินเทอร์เน็ต">🌐 ค่ามือถือ/อินเทอร์เน็ต</option>
-                    <option value="ความงาม/สกินแคร์">💄 ความงาม/สกินแคร์</option>
-                    <option value="เสื้อผ้า/เครื่องแต่งกาย">👕 เสื้อผ้า/แฟชั่น</option>
-                    <option value="สุขภาพ/ค่ายา">💊 สุขภาพ/ค่ายา/หมอ</option>
-                    <option value="ฟิตเนส/กีฬา">💪 ฟิตเนส/ออกกำลังกาย</option>
-                    <option value="บันเทิง/ดูหนัง/เกม">🎮 บันเทิง/ดูหนัง/เกม</option>
-                    <option value="ท่องเที่ยว/ที่พัก">✈️ ท่องเที่ยว/ที่พัก</option>
-                    <option value="บุญ/บริจาค">🙏 ทำบุญ/บริจาค</option>
-                    <option value="ของขวัญ/สังสรรค์">🎁 ของขวัญ/งานสังคม</option>
-                    <option value="สัตว์เลี้ยง">🐾 สัตว์เลี้ยง</option>
-                    <option value="อุปกรณ์ไอที/แกดเจ็ต">💻 อุปกรณ์ไอที/แกดเจ็ต</option>
-                    <option value="การศึกษา/หนังสือ">📚 การศึกษา/หนังสือ</option>
-                    <option value="ภาษี/ประกัน">🛡️ ภาษี/ประกันภัย</option>
-                    <option value="งวดรถ/หนี้สิน">🏦 งวดรถ/ชำระหนี้</option>
-                    <option value="เงินให้ครอบครัว">👨‍👩‍👧 เงินให้ครอบครัว</option>
-                    <option value="ลงทุน/ออมเงิน">📈 ลงทุน/ออมเงิน</option>
-                    <option value="อื่นๆ">✨ อื่นๆ</option>
+                    <!-- optgroup: จัดกลุ่มตัวเลือก -->
+                    <!-- Expense Categories: หมวดหมู่รายจ่าย -->
+                    <optgroup label="💸 หมวดหมู่รายจ่าย" id="expenseGroup">
+                        <option value="อาหารมื้อหลัก" selected>🍛 อาหารมื้อหลัก</option>
+                        <option value="เครื่องดื่ม">☕️ เครื่องดื่ม</option>
+                        <option value="ของทานเล่น/ขนม">🍿 ของทานเล่น/ขนม</option>
+                        <option value="วัตถุดิบทำอาหาร">🥬 วัตถุดิบทำอาหาร/ซูเปอร์ฯ</option>
+                        <option value="ค่าเดินทาง/รถสาธารณะ">🚌 ค่าเดินทาง/รถสาธารณะ</option>
+                        <option value="น้ำมันรถ/แก๊ส">⛽ น้ำมันรถ/แก๊ส</option>
+                        <option value="ค่าที่จอดรถ/ทางด่วน">🛣️ ค่าที่จอดรถ/ทางด่วน</option>
+                        <option value="ซ่อมบำรุงรถ">🔧 ซ่อมบำรุงรถ/เช็คระยะ</option>
+                        <option value="ของใช้ในบ้าน">🧺 ของใช้ในบ้าน</option>
+                        <option value="ค่าเช่า/งวดบ้าน">🏠 ค่าเช่าบ้าน/งวดบ้าน</option>
+                        <option value="ค่าน้ำ/ค่าไฟ">⚡ ค่าน้ำ/ค่าไฟ</option>
+                        <option value="ค่าโทรศัพท์/อินเทอร์เน็ต">🌐 ค่ามือถือ/อินเทอร์เน็ต</option>
+                        <option value="ความงาม/สกินแคร์">💄 ความงาม/สกินแคร์</option>
+                        <option value="เสื้อผ้า/เครื่องแต่งกาย">👕 เสื้อผ้า/แฟชั่น</option>
+                        <option value="สุขภาพ/ค่ายา">💊 สุขภาพ/ค่ายา/หมอ</option>
+                        <option value="ฟิตเนส/กีฬา">💪 ฟิตเนส/ออกกำลังกาย</option>
+                        <option value="บันเทิง/ดูหนัง/เกม">🎮 บันเทิง/ดูหนัง/เกม</option>
+                        <option value="ท่องเที่ยว/ที่พัก">✈️ ท่องเที่ยว/ที่พัก</option>
+                        <option value="บุญ/บริจาค">🙏 ทำบุญ/บริจาค</option>
+                        <option value="ของขวัญ/สังสรรค์">🎁 ของขวัญ/งานสังคม</option>
+                        <option value="สัตว์เลี้ยง">🐾 สัตว์เลี้ยง</option>
+                        <option value="อุปกรณ์ไอที/แกดเจ็ต">💻 อุปกรณ์ไอที/แกดเจ็ต</option>
+                        <option value="การศึกษา/หนังสือ">📚 การศึกษา/หนังสือ</option>
+                        <option value="ภาษี/ประกัน">🛡️ ภาษี/ประกันภัย</option>
+                        <option value="งวดรถ/หนี้สิน">🏦 งวดรถ/ชำระหนี้</option>
+                        <option value="เงินให้ครอบครัว">👨‍👩‍👧 เงินให้ครอบครัว</option>
+                        <option value="ลงทุน/ออมเงิน">📈 ลงทุน/ออมเงิน</option>
+                        <option value="สำรองจ่ายก่อน">💸 สำรองจ่ายก่อน</option>
+                        <option value="อื่นๆ">✨ อื่นๆ</option>
+                    </optgroup>
+                    
+                    <!-- Income Categories: หมวดหมู่รายรับ (ซ่อนไว้ตอนแรก) -->
+                    <optgroup label="💰 หมวดหมู่รายรับ" id="incomeGroup" style="display:none;">
+                        <option value="เงินเดือน">💼 เงินเดือน</option>
+                        <option value="โบนัส/คอมมิชชั่น">🎁 โบนัส/คอมมิชชั่น</option>
+                        <option value="ค่าล่วงเวลา">⏰ ค่าล่วงเวลา</option>
+                        <option value="รายได้ฟรีแลนซ์">💻 รายได้ฟรีแลนซ์</option>
+                        <option value="รายได้จากธุรกิจ">🏪 รายได้จากธุรกิจ</option>
+                        <option value="ดอกเบี้ย/เงินปันผล">📊 ดอกเบี้ย/เงินปันผล</option>
+                        <option value="รายได้จากการลงทุน">💹 รายได้จากการลงทุน</option>
+                        <option value="ค่าเช่า">🏘️ ค่าเช่า (รับ)</option>
+                        <option value="ขายของ">🛍️ ขายของ</option>
+                        <option value="เงินช่วยเหลือ/ของขวัญ">🎀 เงินช่วยเหลือ/ของขวัญ</option>
+                        <option value="คืนเงิน/ส่วนลด">💳 คืนเงิน/ส่วนลด</option>
+                        <option value="เงินคืนสำรองจ่าย">💸 เงินคืนสำรองจ่าย</option>
+                        <option value="รายได้อื่นๆ">✨ รายได้อื่นๆ</option>
+                    </optgroup>
                 </select>
             </div>
             
+            <!-- GROUP 6: วิธีการจ่าย -->
             <div class="form-group">
-                <label>วิธีการจ่าย</label>
+                <label>วิธีการรับ-จ่ายเงิน</label>
                 <select id="payment">
                     <option value="เงินสด">เงินสด</option>
                     <option value="โอนเงิน" selected>โอนเงิน / QR</option>
@@ -317,292 +543,560 @@
                 </select>
             </div>
 
+            <!-- GROUP 7: สถานที่ -->
             <div class="form-group">
-                <label>สถานที่จ่ายเงิน</label>
+                <label>สถานที่รับ-จ่ายเงิน</label>
                 <input type="text" id="location" placeholder="พิกัดจะถูกดึงอัตโนมัติ...">
-                <span id="locStatus" style="font-size:0.7rem; color:var(--accent)">กำลังดึงพิกัด...</span>
+                <span id="locStatus" style="font-size:0.7rem; color:var(--accent); display:block; margin-top:6px;">กำลังดึงพิกัด...</span>
             </div>
 
+            <!-- ปุ่มบันทึก -->
             <button type="submit" id="submitBtn" class="primary-btn">บันทึกรายการ</button>
+            
+            <!-- ปุ่มไปหน้าสรุป -->
             <button type="button" class="secondary-btn" onclick="showDashboard()">📊 สรุปข้อมูลทั้งหมด</button>
-            <button class="secondary-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe9b6AFKlxdqf4ewHNSWxMk7wUo4hwsBAptpJ8-IbS0hx6P5Q/viewform?usp=header', '_blank')" style="margin-top: 20px; border-style: dashed;">🩷 Feedback & Support us</button>
+            
+            <!-- ปุ่ม Feedback (เปิดในแท็บใหม่) -->
+            <button class="secondary-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe9b6AFKlxdqf4ewHNSWxMk7wUo4hwsBAptpJ8-IbS0hx6P5Q/viewform?usp=header', '_blank')" style="margin-top: 25px; border-style: dashed;">🩷 Feedback & Support us</button>
         </form>
     </div>
     
-    <!--Second page - Dashboard section-->
-    
+    <!-- ===================================== SECTION 2: DASHBOARD PAGE (หน้าสรุป) ===================================== -->
+    <!-- หน้านี้จะซ่อนไว้ตอนแรก แสดงเมื่อกดปุ่ม "สรุปข้อมูล" -->
     <div id="dashboardSection">
-        <h2>Spending Summary</h2>
-        
-        <!--Date range box-->
+        <h2>ภาพรวมการเงิน</h2>
+
+        <!-- PART 1: เลือกช่วงเวลา -->
         <div class="filter-container">
             <label>เลือกช่วงเวลา</label>
             <div class="filter-grid">
-                <div><small style="color:var(--text-dim)">เริ่มวันที่</small><input type="date" id="filterStart" onchange="updateDashboard()"></div>
+                <!-- วันที่เริ่มต้น -->
+                <div><small style="color:var(--text-dim)">จากวันที่</small><input type="date" id="filterStart" onchange="updateDashboard()"></div>
+                <!-- วันที่สิ้นสุด -->
                 <div><small style="color:var(--text-dim)">ถึงวันที่</small><input type="date" id="filterEnd" onchange="updateDashboard()"></div>
             </div>
         </div>
 
-        <!--Payment method selection-->
+        <!-- PART 2: ปุ่มเลือกช่วงเวลาด่วน (วันนี้/สัปดาห์นี้/เดือนนี้) -->
+        <div class="quick-date-btns">
+            <button class="secondary-btn" onclick="setDateRange('today')">วันนี้</button>
+            <button class="secondary-btn" onclick="setDateRange('week')">สัปดาห์นี้</button>
+            <button class="secondary-btn" onclick="setDateRange('month')">เดือนนี้</button>
+        </div>
+
+        <!-- PART 3: กรองตามประเภท (ทั้งหมด/เงินออก/เงินเข้า) -->
+        <div class="payment-filter" style="margin-bottom: 15px;">
+            <button class="active" onclick="filterByType('all')">🌟 ทั้งหมด</button>
+            <button onclick="filterByType('expense')">💸เงินออก</button>
+            <button onclick="filterByType('income')">💰เงินเข้า</button>
+        </div>
+
+        <!-- PART 4: กรองตามวิธีการจ่าย -->
         <div class="payment-filter">
-            <button class="active" onclick="filterByPayment('all')" selected>🌟 ทั้งหมด</button>
+            <button class="active" onclick="filterByPayment('all')">🌟 ทั้งหมด</button>
             <button onclick="filterByPayment('เงินสด')">💵 เงินสด</button>
             <button onclick="filterByPayment('โอนเงิน')">📱 โอนเงิน</button>
             <button onclick="filterByPayment('บัตรเครดิต')">💳 บัตรเครดิต</button>
         </div>
 
-        <!--Total amount-->
-        <div class="summary-card">
-            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">จำนวนค่าใช้จ่าย</h3>
-            <p id="totalAmount">0.00</p>
+        <!-- PART 5: สรุปรายรับ-รายจ่าย (2 card) -->
+        <div class="finance-summary">
+            <!-- Card เงินเข้า -->
+            <div class="summary-card" style="background: rgba(76, 209, 55, 0.1); border-color: #4cd137;">
+                <h3 style="font-size: 0.75rem; color: #4cd137; margin:0;">💰เงินเข้า</h3>
+                <p id="totalIncome" style="color: #4cd137; font-size: 1.5rem;">0.00</p>
+            </div>
+            <!-- Card เงินออก -->
+            <div class="summary-card" style="background: rgba(207, 102, 121, 0.1); border-color: #cf6679;">
+                <h3 style="font-size: 0.75rem; color: #cf6679; margin:0;">💸เงินออก</h3>
+                <p id="totalExpense" style="color: #cf6679; font-size: 1.5rem;">0.00</p>
+            </div>
         </div>
 
-        <!--Category section-->
+        <!-- PART 6: เงินคงเหลือสุทธิ -->
+        <div class="summary-card">
+            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">💵 เงินเหลือ</h3>
+            <!-- สีจะเปลี่ยนตามค่า: บวก=เขียว, ลบ=แดง, ศูนย์=ม่วง -->
+            <p id="netBalance">0.00</p>
+        </div>
+
+        <!-- PART 7: สถิติ 3 ช่อง (จำนวนรายการ / จ่ายเฉลี่ย / รับเฉลี่ย) -->
+        <div class="stats-grid">
+            <div class="summary-card">
+                <h3>📊 รายการ</h3>
+                <p id="totalItems">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>💸 จ่าย/วัน</h3>
+                <p id="avgExpense">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>💰 รับ/วัน</h3>
+                <p id="avgIncome">0</p>
+            </div>
+        </div>
+
+        <!-- PART 8: กราฟแท่งแสดงรายจ่ายแยกตามหมวดหมู่ -->
         <div class="chart-card">
-            <h3 class="section-title">สรุปตามหมวดหมู่ </br>(จ่ายมากสุด → จ่ายน้อยสุด)</h3>
+            <h3 class="section-title">แยกตามหมวดหมู่<br>(จ่ายมาก → จ่ายน้อย)</h3>
+            <!-- canvas: พื้นที่วาดกราฟโดย Chart.js -->
             <div class="chart-container"><canvas id="expenseChart"></canvas></div>
         </div>
 
-        <!--Category section-->
+        <!-- PART 9: แผนที่แสดงสถานที่ใช้เงิน -->
         <div class="place-title">
-            <h3 class="section-title">สถานที่ใช้เงินและจำนวนเงินที่ใช้ <br>(ขนาด = จำนวนเงิน)</h3>
+            <h3 class="section-title">สถานที่ใช้เงินและจำนวนเงินที่ใช้<br>(ขนาด = จำนวนเงิน)</h3>
         </div>
-
-        <!--Map section-->
-        <div id="map">
-        </div>
+        <!-- div สำหรับ Leaflet map -->
+        <div id="map"></div>
         
-        <!--List section-->
+        <!-- PART 10: รายการที่บันทึกทั้งหมด -->
         <div class="list-section">
             <h3 class="section-title">รายการที่บันทึก</h3>
         </div>
 
-        <!--History recorded lists-->
+        <!-- ช่องค้นหารายการ -->
+        <input type="text" id="searchHistory" placeholder="🔍 ค้นหารายการ..." style="margin-bottom: 12px;" oninput="updateDashboard()">
+
+        <!-- รายการจะถูกสร้างขึ้นด้วย JavaScript ใน div นี้ -->
         <div class="history-list" id="historyList"></div>
         
-        <!--Export and import section-->
+        <!-- PART 11: จัดการข้อมูล (Export/Import) -->
         <div class="manage-data-section">
             <h3 class="section-title">จัดการข้อมูล</h3>
         </div>
 
-        <!--Export and Import buttons section-->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-            <button class="secondary-btn" onclick="exportData()" style="margin-top:0; border-color: #4cd137; color: #4cd137;">📥 Export data</button>
-            <button class="secondary-btn" onclick="document.getElementById('importFile').click()" style="margin-top:0;">📤 Import data</button>
+        <!-- ปุ่ม Export/Import -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <button class="secondary-btn" onclick="exportData()" style="margin-top:0; border-color: #4cd137; color: #4cd137;">📥 Export</button>
+            <button class="secondary-btn" onclick="document.getElementById('importFile').click()" style="margin-top:0;">📤 Import</button>
         </div>
         
+        <!-- Input file ซ่อนไว้ สำหรับเลือกไฟล์ import -->
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
 
+        <!-- ปุ่มกลับหน้าแรก -->
         <button class="primary-btn" onclick="showForm()">⬅️ กลับหน้าแรก</button>
     </div>
 </div>
 
-<!--------------------------------------------------------------------Script zone---------------------------------------------------------------------------------->
+<!-- ========================================= JAVASCRIPT ZONE ========================================= -->
 <script>
-    let currentPaymentFilter = 'all'; // ให้ค่า Default เป็นทั้งหมด
+    /* ===================================== PART 1: GLOBAL VARIABLES (ตัวแปรหลัก) ===================================== */
     
-    // ฟังก์ชั่นสำหรับฟิลเตอร์ตามวิธีการจ่าย
+    // ตัวแปรเก็บค่าตัวกรองปัจจุบัน
+    let currentPaymentFilter = 'all';  // วิธีการจ่าย: all/เงินสด/โอนเงิน/บัตรเครดิต
+    let currentTypeFilter = 'all';      // ประเภท: all/expense/income
+    
+    // ตัวแปรสำหรับ Chart.js
+    let myChart = null;                 // เก็บ object ของกราฟ (ใช้ destroy ก่อนสร้างใหม่)
+    
+    // ตัวแปรสำหรับ Leaflet map
+    let map = null;                     // เก็บ object ของแผนที่
+    let markers = [];                   // เก็บ marker ทั้งหมดบนแผนที่
+    
+    // วันที่ปัจจุบันในรูปแบบ YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0];
+
+    // Object เก็บสีของแต่ละหมวดหมู่ (ใช้กับกราฟและแผนที่)
+    const categoryColors = {
+        // สีหมวดหมู่รายจ่าย
+        "อาหารมื้อหลัก": "#ff9f43",
+        "เครื่องดื่ม": "#55efc4",
+        "ของทานเล่น/ขนม": "#feca57",
+        "วัตถุดิบทำอาหาร": "#ff6b6b",
+        "ค่าเดินทาง/รถสาธารณะ": "#48dbfb",
+        "น้ำมันรถ/แก๊ส": "#54a0ff",
+        "ค่าที่จอดรถ/ทางด่วน": "#5f27cd",
+        "ซ่อมบำรุงรถ": "#341f97",
+        "ของใช้ในบ้าน": "#1dd1a1",
+        "ค่าเช่า/งวดบ้าน": "#00d2d3",
+        "ค่าน้ำ/ค่าไฟ": "#ffdb58",
+        "ค่าโทรศัพท์/อินเทอร์เน็ต": "#0abde3",
+        "ความงาม/สกินแคร์": "#ff9ff3",
+        "เสื้อผ้า/เครื่องแต่งกาย": "#f368e0",
+        "สุขภาพ/ค่ายา": "#ee5253",
+        "ฟิตเนส/กีฬา": "#10ac84",
+        "บันเทิง/ดูหนัง/เกม": "#5f27cd",
+        "ท่องเที่ยว/ที่พัก": "#00d2d3",
+        "บุญ/บริจาค": "#00d2d3",
+        "ของขวัญ/สังสรรค์": "#ff6b6b",
+        "สัตว์เลี้ยง": "#54a0ff",
+        "อุปกรณ์ไอที/แกดเจ็ต": "#2e86de",
+        "การศึกษา/หนังสือ": "#341f97",
+        "ภาษี/ประกัน": "#576574",
+        "งวดรถ/หนี้สิน": "#222f3e",
+        "เงินให้ครอบครัว": "#ee5253",
+        "ลงทุน/ออมเงิน": "#1dd1a1",
+        "สำรองจ่ายก่อน": "#1dd1a5",
+        "อื่นๆ": "#bb86fc",
+        // สีหมวดหมู่รายรับ
+        "เงินเดือน": "#4cd137",
+        "โบนัส/คอมมิชชั่น": "#44bd32",
+        "ค่าล่วงเวลา": "#7ed6df",
+        "รายได้ฟรีแลนซ์": "#22a6b3",
+        "รายได้จากธุรกิจ": "#6ab04c",
+        "ดอกเบี้ย/เงินปันผล": "#badc58",
+        "รายได้จากการลงทุน": "#f9ca24",
+        "ค่าเช่า": "#3dc1d3",
+        "ขายของ": "#74b9ff",
+        "เงินช่วยเหลือ/ของขวัญ": "#a29bfe",
+        "คืนเงิน/ส่วนลด": "#fd79a8",
+        "เงินคืนสำรองจ่าย": "#fdcb6e",
+        "รายได้อื่นๆ": "#6c5ce7"
+    };
+
+    /* ===================================== PART 2: FILTER FUNCTIONS (ฟังก์ชันกรอง) ===================================== */
+    
+    /**
+     * filterByPayment - กรองตามวิธีการจ่าย
+     * @param {string} method - วิธีการจ่าย (all/เงินสด/โอนเงิน/บัตรเครดิต)
+     */
     function filterByPayment(method) {
         currentPaymentFilter = method;
         
-        // เปลี่ยนสถานะปุ่ม active
-        document.querySelectorAll('.payment-filter button').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        // เปลี่ยนสถานะปุ่ม active (เฉพาะกลุ่มปุ่มวิธีการจ่าย = index [1])
+        const paymentButtons = document.querySelectorAll('.payment-filter')[1].querySelectorAll('button');
+        paymentButtons.forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
         
-        // อัปเดตข้อมูลใหม่
+        updateDashboard();  // อัปเดตข้อมูลใหม่
+    }
+
+    /**
+     * filterByType - กรองตามประเภทรายการ
+     * @param {string} type - ประเภท (all/expense/income)
+     */
+    function filterByType(type) {
+        currentTypeFilter = type;
+        
+        // เปลี่ยนสถานะปุ่ม active (เฉพาะกลุ่มปุ่มประเภท = index [0])
+        const typeButtons = document.querySelectorAll('.payment-filter')[0].querySelectorAll('button');
+        typeButtons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        
         updateDashboard();
     }
 
-    let myChart = null;
-    let map = null;
-    let markers = []; // ในกรณีนี้จะเก็บ CircleMarker
-    const today = new Date().toISOString().split('T')[0];
+    /**
+     * setDateRange - ตั้งค่าช่วงวันที่แบบด่วน
+     * @param {string} period - ช่วงเวลา (today/week/month)
+     */
+    function setDateRange(period) {
+        const today = new Date();
+        let startDate, endDate = today.toISOString().split('T')[0];
+        
+        if (period === 'today') {
+            // วันนี้: วันเดียว
+            startDate = endDate;
+        } else if (period === 'week') {
+            // สัปดาห์นี้: 7 วันย้อนหลัง
+            const weekAgo = new Date(today);
+            weekAgo.setDate(today.getDate() - 6);
+            startDate = weekAgo.toISOString().split('T')[0];
+        } else if (period === 'month') {
+            // เดือนนี้: จากวันที่ 1 ของเดือน
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+        }
+        
+        // ใส่ค่าลง input
+        document.getElementById('filterStart').value = startDate;
+        document.getElementById('filterEnd').value = endDate;
+        updateDashboard();
+    }
 
-    const categoryColors = {
-            "อาหารมื้อหลัก": "#ff9f43",
-            "เครื่องดื่ม": "#55efc4",
-            "ของทานเล่น/ขนม": "#feca57",
-            "วัตถุดิบทำอาหาร": "#ff6b6b",
-            "ค่าเดินทาง/รถสาธารณะ": "#48dbfb",
-            "น้ำมันรถ/แก๊ส": "#54a0ff",
-            "ค่าที่จอดรถ/ทางด่วน": "#5f27cd",
-            "ซ่อมบำรุงรถ": "#341f97",
-            "ของใช้ในบ้าน": "#1dd1a1",
-            "ค่าเช่า/งวดบ้าน": "#00d2d3",
-            "ค่าน้ำ/ค่าไฟ": "#ffdb58",
-            "ค่าโทรศัพท์/อินเทอร์เน็ต": "#0abde3",
-            "ความงาม/สกินแคร์": "#ff9ff3",
-            "เสื้อผ้า/เครื่องแต่งกาย": "#f368e0",
-            "สุขภาพ/ค่ายา": "#ee5253",
-            "ฟิตเนส/กีฬา": "#10ac84",
-            "บันเทิง/ดูหนัง/เกม": "#5f27cd",
-            "ท่องเที่ยว/ที่พัก": "#00d2d3",
-            "บุญ/บริจาค": "#00d2d3",
-            "ของขวัญ/สังสรรค์": "#ff6b6b",
-            "สัตว์เลี้ยง": "#54a0ff",
-            "อุปกรณ์ไอที/แกดเจ็ต": "#2e86de",
-            "การศึกษา/หนังสือ": "#341f97",
-            "ภาษี/ประกัน": "#576574",
-            "งวดรถ/หนี้สิน": "#222f3e",
-            "เงินให้ครอบครัว": "#ee5253",
-            "ลงทุน/ออมเงิน": "#1dd1a1",
-            "อื่นๆ": "#bb86fc"
-            };
+    /* ===================================== PART 3: FORM FUNCTIONS (ฟังก์ชันจัดการฟอร์ม) ===================================== */
+    
+    /**
+     * updateCategoryOptions - สลับหมวดหมู่ตามประเภทรายการ
+     * เรียกเมื่อเปลี่ยนค่าใน dropdown "ประเภทรายการ"
+     */
+    function updateCategoryOptions() {
+        const type = document.getElementById('transactionType').value;
+        const expenseGroup = document.getElementById('expenseGroup');
+        const incomeGroup = document.getElementById('incomeGroup');
+        const categoryLabel = document.getElementById('categoryLabel');
+        
+        if (type === 'expense') {
+            // แสดงหมวดหมู่รายจ่าย
+            expenseGroup.style.display = '';
+            incomeGroup.style.display = 'none';
+            categoryLabel.textContent = 'หมวดหมู่ค่าใช้จ่าย';
+            document.getElementById('category').value = 'อาหารมื้อหลัก';
+        } else {
+            // แสดงหมวดหมู่รายรับ
+            expenseGroup.style.display = 'none';
+            incomeGroup.style.display = '';
+            categoryLabel.textContent = 'หมวดหมู่รายรับ';
+            document.getElementById('category').value = 'เงินเดือน';
+        }
+    }
 
+    /**
+     * initForm - ตั้งค่าเริ่มต้นของฟอร์ม
+     * เรียกเมื่อเปิดแอปครั้งแรกหรือหลังจากบันทึก/ยกเลิกการแก้ไข
+     */
+    function initForm() {
+        // ตั้งค่าวันที่เป็นวันนี้
+        document.getElementById('date').value = today;
+        
+        // ดึงเวลาปัจจุบัน (24 ชั่วโมง)
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');      // 00-23
+        const minutes = String(now.getMinutes()).padStart(2, '0');  // 00-59
+        document.getElementById('time').value = `${hours}:${minutes}`;
+        
+        // รีเซ็ตเป็นโหมดรายจ่าย
+        document.getElementById('transactionType').value = 'expense';
+        updateCategoryOptions();
+        
+        // รีเซ็ต edit mode
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
+        document.getElementById('editNotice').style.display = "none";
+        
+        // ดึงพิกัดที่อยู่จาก GPS (ถ้าผู้ใช้อนุญาต)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((p) => {
+                const lat = p.coords.latitude.toFixed(6);
+                const lng = p.coords.longitude.toFixed(6);
+                document.getElementById('location').value = `${lat}, ${lng}`;
+                document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
+            });
+        }
+    }
+
+    /* ===================================== PART 4: NAVIGATION FUNCTIONS (ฟังก์ชันเปลี่ยนหน้า) ===================================== */
+    
+    /**
+     * showDashboard - แสดงหน้าสรุป
+     * ซ่อนฟอร์ม แสดงหน้า dashboard
+     */
     function showDashboard() {
         document.getElementById('formSection').style.display = 'none';
         document.getElementById('dashboardSection').style.display = 'block';
+        
+        // ตั้งค่าวันที่เริ่มต้นเป็นวันนี้ (ถ้ายังไม่มีค่า)
         if(!document.getElementById('filterStart').value) {
             document.getElementById('filterStart').value = today;
             document.getElementById('filterEnd').value = today;
         }
         
+        // สร้างแผนที่ (ถ้ายังไม่มี)
         if (!map) {
+            // พิกัดเริ่มต้น: กรุงเทพฯ
             map = L.map('map').setView([13.736717, 100.523186], 10);
+            // โหลด tile layer (แผนที่พื้นหลัง) จาก CartoDB
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap'
             }).addTo(map);
         }
 
         updateDashboard();
+        // บังคับให้แผนที่ปรับขนาดใหม่ (แก้ bug แสดงผลไม่เต็ม)
         setTimeout(() => map.invalidateSize(), 200);
     }
 
+    /**
+     * showForm - แสดงหน้าฟอร์ม
+     * ซ่อนหน้า dashboard แสดงฟอร์ม
+     */
     function showForm() {
         document.getElementById('formSection').style.display = 'block';
         document.getElementById('dashboardSection').style.display = 'none';
+        // ถ้าไม่ได้อยู่ในโหมดแก้ไข ให้ reset ฟอร์ม
         if(document.getElementById('editIndex').value === "-1") initForm(); 
     }
 
-    function initForm() {
-    // ตั้งค่าวันที่
-    document.getElementById('date').value = today;
+    /* ===================================== PART 5: DASHBOARD UPDATE (อัปเดตหน้าสรุป) ===================================== */
     
-    // ดึงเวลาปัจจุบันในรูปแบบ 24 ชั่วโมง (HH:MM)
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('time').value = `${hours}:${minutes}`;
-    
-    document.getElementById('editIndex').value = "-1";
-    document.getElementById('submitBtn').innerText = "บันทึกรายการ";
-    document.getElementById('editNotice').style.display = "none";
-    
-    //Pulling latitude and longtitude automatically
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((p) => {
-            document.getElementById('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
-            document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
-        });
-    }
-}
-
+    /**
+     * updateDashboard - คำนวณและแสดงข้อมูลสรุปทั้งหมด
+     * ฟังก์ชันหลักของหน้าสรุป เรียกทุกครั้งที่มีการเปลี่ยนแปลงตัวกรอง
+     */
     function updateDashboard() {
+        // 1. โหลดข้อมูลจาก localStorage
         const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
+        const searchTerm = document.getElementById('searchHistory').value.toLowerCase();
 
-        // กรองตามวันที่ก่อน
-        let filtered = expenses.filter(item => item.date >= start && item.date <= end);
+        // 2. กรองข้อมูลตามเงื่อนไขต่างๆ
+        let filtered = expenses.filter(item => {
+            // กรองวันที่
+            const dateMatch = item.date >= start && item.date <= end;
+            
+            // กรองวิธีการจ่าย
+            const paymentMatch = currentPaymentFilter === 'all' || item.payment === currentPaymentFilter;
+            
+            // กรองประเภท (รองรับข้อมูลเก่าที่ไม่มีฟิลด์ type)
+            const typeMatch = currentTypeFilter === 'all' || 
+                             item.type === currentTypeFilter || 
+                             (!item.type && currentTypeFilter === 'expense');
+            
+            // กรองคำค้นหา (ค้นในรายละเอียดและหมวดหมู่)
+            const searchMatch = !searchTerm || 
+                               item.description.toLowerCase().includes(searchTerm) ||
+                               item.category.toLowerCase().includes(searchTerm);
+            
+            return dateMatch && paymentMatch && typeMatch && searchMatch;
+        });
 
-        // จากนั้นกรองตามวิธีการจ่ายเงิน
-        if (currentPaymentFilter !== 'all') {
-            filtered = filtered.filter(item => item.payment === currentPaymentFilter);
+        // 3. แยกรายรับและรายจ่าย
+        const incomeItems = filtered.filter(item => item.type === 'income');
+        const expenseItems = filtered.filter(item => item.type !== 'income');
+
+        // 4. คำนวณยอดรวม
+        const income = incomeItems.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        const expense = expenseItems.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        const netBalance = income - expense;
+
+        // 5. คำนวณค่าเฉลี่ยต่อวัน
+        const daysDiff = Math.ceil((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1;
+        const avgExpense = daysDiff > 0 ? expense / daysDiff : 0;
+        const avgIncome = daysDiff > 0 ? income / daysDiff : 0;
+
+        // 6. อัพเดทตัวเลขบนหน้าจอ
+        // ใช้ toLocaleString เพื่อแสดงเลขแบบมีคอมม่า (1,000.00)
+        document.getElementById('totalIncome').innerText = income.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " ฿";
+        document.getElementById('totalExpense').innerText = expense.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " ฿";
+        document.getElementById('netBalance').innerText = netBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " ฿";
+        
+        document.getElementById('totalItems').innerText = filtered.length;
+        document.getElementById('avgExpense').innerText = avgExpense.toFixed(0) + " ฿";
+        document.getElementById('avgIncome').innerText = avgIncome.toFixed(0) + " ฿";
+
+        // 7. เปลี่ยนสีของเงินคงเหลือตามค่า
+        const balanceElement = document.getElementById('netBalance');
+        if (netBalance > 0) {
+            balanceElement.style.color = '#4cd137';  // เขียว: มีเงินเหลือ
+        } else if (netBalance < 0) {
+            balanceElement.style.color = '#cf6679';  // แดง: ขาดทุน
+        } else {
+            balanceElement.style.color = 'var(--accent)';  // ม่วง: พอดี
         }
-        const total = filtered.reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " THB";
 
+        // 8. สรุปยอดตามหมวดหมู่ (เฉพาะรายจ่าย)
         const categoryData = {};
-        filtered.forEach(item => {
+        expenseItems.forEach(item => {
+            // รวมยอดเงินของแต่ละหมวดหมู่
             categoryData[item.category] = (categoryData[item.category] || 0) + parseFloat(item.amount);
         });
 
+        // 9. เรียงลำดับจากมากไปน้อย
         const sortedEntries = Object.entries(categoryData).sort((a, b) => b[1] - a[1]);
-        const sortedLabels = sortedEntries.map(e => e[0]);
-        const sortedValues = sortedEntries.map(e => e[1]);
+        const sortedLabels = sortedEntries.map(e => e[0]);  // ชื่อหมวดหมู่
+        const sortedValues = sortedEntries.map(e => e[1]);  // จำนวนเงิน
 
+        // 10. เรียกฟังก์ชันวาดกราฟและแผนที่
         renderChart(sortedLabels, sortedValues);
-        updateMap(filtered);
+        updateMap(expenseItems);
 
+        // 11. แสดงรายการทั้งหมด
         const listContainer = document.getElementById('historyList');
         listContainer.innerHTML = filtered.length ? '' : '<small style="color:var(--text-dim); display:block; text-align:center; padding:10px;">ไม่มีข้อมูล</small>';
         
+        // วนลูปแสดงแต่ละรายการ (กลับลำดับให้ใหม่ที่สุดอยู่บน)
         filtered.slice().reverse().forEach((item) => {
             const originalIndex = expenses.indexOf(item);
             const div = document.createElement('div');
             div.className = 'history-item';
             div.innerHTML = `
-                            <div>
-                                <strong>${item.description}</strong><br>
-                                <small style="color:var(--text-dim)">${item.date} ${item.time || ''} | ${item.category}</small><br>
-                                <div class="action-btns">
-                                    <button class="edit-btn" onclick="editExpense(${originalIndex})">✏️</button>
-                                    <button class="delete-btn" onclick="deleteExpense(${originalIndex})">🗑️</button>
-                                </div>
-                            </div>
-                            <div class="amount-text">-${parseFloat(item.amount).toFixed(2)}</div>
-                        `;
+                <div>
+                    <strong>${item.description}</strong><br>
+                    <small style="color:var(--text-dim)">${item.date} ${item.time || ''} | ${item.category}</small><br>
+                    <div class="action-btns">
+                        <button class="edit-btn" onclick="editExpense(${originalIndex})">✏️</button>
+                        <button class="delete-btn" onclick="deleteExpense(${originalIndex})">🗑️</button>
+                    </div>
+                </div>
+                <div class="amount-text" style="color: ${item.type === 'income' ? '#4cd137' : '#cf6679'}">
+                    ${item.type === 'income' ? '+' : '-'}${parseFloat(item.amount).toFixed(2)}
+                </div>
+            `;
             listContainer.appendChild(div);
         });
     }
 
+    /* ===================================== PART 6: CHART RENDERING (วาดกราฟ) ===================================== */
+    
+    /**
+     * renderChart - วาดกราฟแท่งด้วย Chart.js
+     * @param {Array} labels - ชื่อหมวดหมู่
+     * @param {Array} values - จำนวนเงินแต่ละหมวดหมู่
+     */
     function renderChart(labels, values) {
         const ctx = document.getElementById('expenseChart').getContext('2d');
+        
+        // ทำลายกราฟเก่าก่อน (ป้องกันซ้อนทับ)
         if (myChart) myChart.destroy();
         
-        // ใช้สีหมวดหมู่ที่ตั้งไว้สำหรับกราฟด้วย
+        // เลือกสีจาก categoryColors
         const colors = labels.map(label => categoryColors[label] || "#bb86fc");
 
+        // สร้างกราฟใหม่
         myChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'bar',  // กราฟแท่ง
             data: {
                 labels: labels,
-                datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }]
+                datasets: [{ 
+                    data: values, 
+                    backgroundColor: colors, 
+                    borderRadius: 8  // มุมโค้ง
+                }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { display: false }, // เอาเส้นตารางแนวนอนออก
-                    ticks: { display: false }, // เอาตัวเลขแกน Y ออกเพื่อให้ดูคลีนที่สุด
-                    border: { display: false } // เอาเส้นขอบแกนออก
+                plugins: { 
+                    legend: { display: false }  // ไม่แสดง legend
                 },
-                x: {
-                    grid: { display: false }, // เอาเส้นตารางแนวตั้งออก
-                    border: { display: false }, // เอาเส้นขอบแกนออก
-                    ticks: {
-                        color: '#a0a0a0', // ปรับสีตัวอักษรหมวดหมู่ให้ดู Soft
-                        font: { size: 10 } } }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },    // ไม่แสดงเส้นตาราง
+                        ticks: { display: false },   // ไม่แสดงตัวเลข
+                        border: { display: false }
+                    },
+                    x: {
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: {
+                            color: '#a0a0a0',
+                            font: { size: 10 }
+                        }
+                    }
                 }
             }
-
         });
     }
 
-    // ฟังก์ชั่นแสดงแผนที่วงกลม
+    /* ===================================== PART 7: MAP RENDERING (แสดงแผนที่) ===================================== */
+    
+    /**
+     * updateMap - อัปเดตแผนที่ด้วย CircleMarker
+     * @param {Array} data - รายการที่มีพิกัด
+     */
     function updateMap(data) {
+        // ลบ marker เก่าทั้งหมด
         markers.forEach(m => map.removeLayer(m));
         markers = [];
 
         let coordsFound = [];
         data.forEach(item => {
+            // ตรวจสอบว่ามีพิกัดหรือไม่ (รูปแบบ: "lat, lng")
             if (item.location && item.location.includes(',')) {
                 const [lat, lng] = item.location.split(',').map(n => parseFloat(n.trim()));
                 const amount = parseFloat(item.amount);
                 
                 if (!isNaN(lat) && !isNaN(lng)) {
-                    // คำนวณขนาดรัศมี: วงกลมจะใหญ่ตามเงิน แต่ใช้ sqrt เพื่อไม่ให้วงใหญ่เว่อร์เกินไป
-                    // รัศมี (Radius) ในที่นี้คือหน่วยพิกเซล (เพราะใช้ circleMarker)
+                    // คำนวณขนาดวงกลมตามจำนวนเงิน
                     const radiusSize = Math.sqrt(amount) * 1.5 + 5; 
                     
                     // เลือกสีตามหมวดหมู่
                     const color = categoryColors[item.category] || "#bb86fc";
 
+                    // สร้าง CircleMarker
                     const circle = L.circleMarker([lat, lng], {
                         radius: radiusSize,
                         fillColor: color,
@@ -619,63 +1113,109 @@
             }
         });
 
+        // ปรับมุมมองแผนที่ให้เห็น marker ทั้งหมด
         if (coordsFound.length > 0) {
             const bounds = L.latLngBounds(coordsFound);
             map.fitBounds(bounds, { padding: [40, 40] });
         }
     }
+
+    /* ===================================== PART 8: CRUD OPERATIONS (เพิ่ม/แก้ไข/ลบข้อมูล) ===================================== */
     
-    // ฟังก์ชั่น ลบ ข้อมูลที่บันทึกไปแล้ว
+    /**
+     * deleteExpense - ลบรายการ
+     * @param {number} index - ตำแหน่งของรายการใน array
+     */
     function deleteExpense(index) {
         if (confirm("ต้องการลบใช่หรือไม่?")) {
             let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-            expenses.splice(index, 1);
+            expenses.splice(index, 1);  // ลบ 1 รายการที่ตำแหน่ง index
             localStorage.setItem("expenses", JSON.stringify(expenses));
             updateDashboard();
         }
     }
 
-    // ฟังก์ชั่น แก้ไข ข้อมูลที่บันทึกไปแล้ว
+    /**
+     * editExpense - เปิดโหมดแก้ไขรายการ
+     * @param {number} index - ตำแหน่งของรายการใน array
+     */
     function editExpense(index) {
-            const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-            const item = expenses[index];
-            document.getElementById('date').value = item.date;
-            document.getElementById('time').value = item.time || '00:00';  // เพิ่มบรรทัดนี้
-            document.getElementById('description').value = item.description;
-            document.getElementById('amount').value = item.amount;
-            document.getElementById('category').value = item.category;
-            document.getElementById('payment').value = item.payment;
-            document.getElementById('location').value = item.location;
-            document.getElementById('editIndex').value = index;
-            document.getElementById('submitBtn').innerText = "อัปเดตรายการ";
-            document.getElementById('editNotice').style.display = "block";
-            showForm();
-        }
+        const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        const item = expenses[index];
+        
+        // นำข้อมูลเก่ามาใส่ในฟอร์ม
+        document.getElementById('date').value = item.date;
+        document.getElementById('time').value = item.time || '00:00';
+        document.getElementById('transactionType').value = item.type || 'expense';
+        updateCategoryOptions();
+        document.getElementById('description').value = item.description;
+        document.getElementById('amount').value = item.amount;
+        document.getElementById('category').value = item.category;
+        document.getElementById('payment').value = item.payment;
+        document.getElementById('location').value = item.location;
+        
+        // เปลี่ยนเป็นโหมดแก้ไข
+        document.getElementById('editIndex').value = index;
+        document.getElementById('submitBtn').innerText = "อัปเดตรายการ";
+        document.getElementById('editNotice').style.display = "block";
+        
+        showForm();  // กลับไปหน้าฟอร์ม
+    }
 
+    /* ===================================== PART 9: FORM SUBMISSION (บันทึกข้อมูล) ===================================== */
+    
+    /**
+     * Event listener สำหรับ submit ฟอร์ม
+     * ทำงานทั้งเวลาบันทึกใหม่และแก้ไข
+     */
     document.getElementById("expenseForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            const index = parseInt(document.getElementById('editIndex').value);
-            const expense = {
-                date: document.getElementById("date").value,
-                time: document.getElementById("time").value,  // เพิ่มบรรทัดนี้
-                description: document.getElementById("description").value,
-                amount: document.getElementById("amount").value,
-                category: document.getElementById("category").value,
-                payment: document.getElementById("payment").value,
-                location: document.getElementById("location").value
-            };
+        e.preventDefault();  // ป้องกัน refresh หน้า
+        
+        // อ่านค่าจากฟอร์ม
+        const index = parseInt(document.getElementById('editIndex').value);
+        const expense = {
+            date: document.getElementById("date").value,
+            time: document.getElementById("time").value,
+            type: document.getElementById("transactionType").value,
+            description: document.getElementById("description").value,
+            amount: document.getElementById("amount").value,
+            category: document.getElementById("category").value,
+            payment: document.getElementById("payment").value,
+            location: document.getElementById("location").value
+        };
+        
+        // โหลดข้อมูลเก่า
         let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-        if (index === -1) expenses.push(expense);
-        else expenses[index] = expense;
+        
+        // ถ้า index = -1 แสดงว่าเพิ่มใหม่, ไม่เช่นนั้นคือแก้ไข
+        if (index === -1) {
+            expenses.push(expense);
+        } else {
+            expenses[index] = expense;
+        }
+        
+        // บันทึกกลับ localStorage
         localStorage.setItem("expenses", JSON.stringify(expenses));
+        
         alert("บันทึกเรียบร้อย ✨");
+        
+        // รีเซ็ตฟอร์ม
         this.reset();
         initForm();
     });
 
+    /* ===================================== PART 10: INITIALIZATION (เริ่มต้นแอป) ===================================== */
+    
+    /**
+     * เมื่อโหลดหน้าเว็บเสร็จ ให้ตั้งค่าฟอร์ม
+     */
     window.onload = initForm;
 
-    // ฟังก์ชันส่งออกข้อมูลเป็นไฟล์ JSON
+    /* ===================================== PART 11: IMPORT/EXPORT (นำเข้า/ส่งออกข้อมูล) ===================================== */
+    
+    /**
+     * exportData - ส่งออกข้อมูลเป็นไฟล์ JSON
+     */
     function exportData() {
         const data = localStorage.getItem("expenses") || "[]";
         const blob = new Blob([data], { type: "application/json" });
@@ -688,7 +1228,10 @@
         URL.revokeObjectURL(url);
     }
 
-    // ฟังก์ชันนำเข้าข้อมูลจากไฟล์ JSON
+    /**
+     * importData - นำเข้าข้อมูลจากไฟล์ JSON
+     * @param {Event} event - event จาก input file
+     */
     function importData(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -697,11 +1240,13 @@
         reader.onload = function(e) {
             try {
                 const importedData = JSON.parse(e.target.result);
+                
+                // ตรวจสอบว่าเป็น array หรือไม่
                 if (Array.isArray(importedData)) {
                     if (confirm("ต้องการนำเข้าข้อมูลใช่ไหม? ข้อมูลเดิมในเครื่องนี้จะถูกแทนที่ด้วยข้อมูลใหม่")) {
                         localStorage.setItem("expenses", JSON.stringify(importedData));
                         alert("นำเข้าข้อมูลสำเร็จ ✨");
-                        updateDashboard(); // รีเฟรชหน้าจอ
+                        updateDashboard();
                     }
                 } else {
                     alert("รูปแบบไฟล์ไม่ถูกต้อง");
