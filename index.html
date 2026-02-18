@@ -14,7 +14,7 @@
     <meta charset="UTF-8">
     
     <!-- Responsive Design: ให้แอปปรับขนาดตามหน้าจอ -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- Page Title -->
     <title>MoniDay - Your Daily Spending Tracker</title>
@@ -68,9 +68,9 @@
         .container {
             background: var(--bg-card);
             width: 100%;
-            max-width: 420px;           /* ความกว้างสูงสุด */
-            padding: 35px;              /* ระยะห่างด้านใน */
-            border-radius: 28px;        /* มุมโค้ง */
+            max-width: 380px;           /* ความกว้างสูงสุด */
+            padding: 24px;              /* ระยะห่างด้านใน */
+            border-radius: 20px;        /* มุมโค้ง */
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);  /* เงา */
             border: 1px solid var(--border);
             position: relative;
@@ -81,7 +81,7 @@
             font-weight: 500; 
             margin-bottom: 8px; 
             color: #ffffff; 
-            font-size: 1.3rem; 
+            font-size: 1.1rem; 
             text-align: center; 
         }
         
@@ -96,7 +96,7 @@
 
         /* ==================== 4. FORM ELEMENTS (ฟอร์มกรอกข้อมูล) ==================== */
         .form-group { 
-            margin-bottom: 22px;  /* ระยะห่างระหว่างแต่ละฟิลด์ */
+            margin-bottom: 16px;  /* ระยะห่างระหว่างแต่ละฟิลด์ */
         }
 
         /* Label สำหรับแต่ละฟิลด์ */
@@ -112,11 +112,11 @@
         /* Input และ Select: ช่องกรอกข้อมูล */
         input, select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 10px 13px;
             background-color: var(--input-bg);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.95rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
             color: var(--text-main);
             box-sizing: border-box;      /* นับ padding ในความกว้าง */
             outline: none;               /* ไม่แสดงขอบเมื่อ focus */
@@ -132,8 +132,8 @@
         /* กล่องสำหรับเลือกวันที่ */
         .filter-container {
             background: rgba(255,255,255,0.03);  /* สีขาวโปร่งแสง 3% */
-            padding: 18px;
-            border-radius: 16px;
+            padding: 13px;
+            border-radius: 12px;
             margin-bottom: 15px;
             border: 1px solid var(--border);
             text-align: center;
@@ -162,14 +162,14 @@
         /* ปุ่มหลัก: สีม่วงโดดเด่น */
         button.primary-btn {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             margin-top: 15px;
             background: var(--accent);
             color: #121212;              /* ตัวอักษรสีเข้มบนพื้นสว่าง */
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             cursor: pointer;             /* แสดงมือชี้เมื่อ hover */
             transition: transform 0.2s, opacity 0.2s;
         }
@@ -183,14 +183,14 @@
         /* ปุ่มรอง: โปร่งใส มีแค่ขอบ */
         .secondary-btn {
             width: 100%;
-            padding: 13px;
+            padding: 10px;
             margin-top: 15px;
             background: transparent;
             color: var(--accent);
             border: 1px solid var(--accent);
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -209,8 +209,8 @@
         /* Card แสดงสรุปตัวเลข */
         .summary-card {
             background: var(--input-bg);
-            padding: 18px;
-            border-radius: 16px;
+            padding: 13px;
+            border-radius: 12px;
             text-align: center;
             margin-bottom: 15px;
             border: 1px solid var(--border);
@@ -226,7 +226,7 @@
         /* ตัวเลขใน summary card */
         .summary-card p { 
             margin: 8px 0 0; 
-            font-size: 1.7rem; 
+            font-size: 1.4rem; 
             font-weight: 600; 
             color: var(--accent); 
         }
@@ -235,13 +235,13 @@
         .chart-container {
             position: relative;
             margin: 15px 0 25px;
-            height: 250px;          /* ความสูงของกราฟ */
+            height: 200px;          /* ความสูงของกราฟ */
             width: 100%;
         }
 
         /* ==================== 9. MAP SECTION (แผนที่) ==================== */
         #map {
-            height: 220px;
+            height: 180px;
             width: 100%;
             border-radius: 16px;
             margin-bottom: 25px;
@@ -253,19 +253,19 @@
         /* ==================== 10. HISTORY LIST (รายการที่บันทึก) ==================== */
         /* กล่องที่บรรจุรายการทั้งหมด - สามารถเลื่อนได้ */
         .history-list {
-            max-height: 200px;
+            max-height: 170px;
             overflow-y: auto;       /* เลื่อนแนวตั้งได้ */
             margin-top: 10px;
         }
 
         /* แต่ละรายการในประวัติ */
         .history-item {
-            padding: 14px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;  /* จัดชิดซ้าย-ขวา */
             align-items: center;
-            font-size: 0.85rem;
+            font-size: 0.80rem;
         }
 
         /* กลุ่มปุ่ม แก้ไข/ลบ */
@@ -450,7 +450,7 @@
                         <input type="time" id="time" required readonly style="cursor: not-allowed; opacity: 0.8;">
                     </div>
                 </div>
-                <small style="font-size:0.7rem; color:var(--text-dim); display:block; margin-top:8px;">⏰ วันและเวลาดึงอัตโนมัติจากระบบ</small>
+                <small style="font-size:0.7rem; color:var(--text-dim); display:block; margin-top:8px;">⏰ วันและเวลาถูกดึงอัตโนมัติผ่านระบบ</small>
             </div>
             
             <!-- GROUP 2: ประเภทรายการ (รายรับ/รายจ่าย) -->
@@ -458,15 +458,15 @@
                 <label>ประเภทรายการ</label>
                 <!-- onchange: เมื่อเปลี่ยนค่า จะเรียกฟังก์ชัน updateCategoryOptions() -->
                 <select id="transactionType" onchange="updateCategoryOptions()">
-                    <option value="expense">💸เงินออก</option>
-                    <option value="income">💰เงินเข้า</option>
+                    <option value="expense">💸 เงินออก</option>
+                    <option value="income">💰 เงินเข้า</option>
                 </select>
             </div>   
             
             <!-- GROUP 3: รายละเอียด -->
             <div class="form-group">
                 <label>รายละเอียดเงินเข้า-เงินออก</label>
-                <input type="text" id="description" placeholder="กรอกรายละเอียด..." required>
+                <input type="text" id="description" placeholder="กรอกรายละเอียดข้อมูล..." required>
             </div>
             
             <!-- GROUP 4: จำนวนเงิน -->
@@ -546,8 +546,8 @@
             <!-- GROUP 7: สถานที่ -->
             <div class="form-group">
                 <label>สถานที่รับ-จ่ายเงิน</label>
-                <input type="text" id="location" placeholder="พิกัดจะถูกดึงอัตโนมัติ...">
-                <span id="locStatus" style="font-size:0.7rem; color:var(--accent); display:block; margin-top:6px;">กำลังดึงพิกัด...</span>
+                <input type="text" id="location" placeholder="พิกัดจะถูกดึงอัตโนมัติผ่านระบบ...">
+                <span id="locStatus" style="font-size:0.7rem; color:var(--accent); display:block; margin-top:6px;">กำลังดึงพิกัดจากระบบ...</span>
             </div>
 
             <!-- ปุ่มบันทึก -->
@@ -587,8 +587,8 @@
         <!-- PART 3: กรองตามประเภท (ทั้งหมด/เงินออก/เงินเข้า) -->
         <div class="payment-filter" style="margin-bottom: 15px;">
             <button class="active" onclick="filterByType('all')">🌟 ทั้งหมด</button>
-            <button onclick="filterByType('expense')">💸เงินออก</button>
-            <button onclick="filterByType('income')">💰เงินเข้า</button>
+            <button onclick="filterByType('expense')">💸 เงินออก</button>
+            <button onclick="filterByType('income')">💰 เงินเข้า</button>
         </div>
 
         <!-- PART 4: กรองตามวิธีการจ่าย -->
@@ -603,19 +603,19 @@
         <div class="finance-summary">
             <!-- Card เงินเข้า -->
             <div class="summary-card" style="background: rgba(76, 209, 55, 0.1); border-color: #4cd137;">
-                <h3 style="font-size: 0.75rem; color: #4cd137; margin:0;">💰เงินเข้า</h3>
+                <h3 style="font-size: 0.75rem; color: #4cd137; margin:0;">💰 เงินเข้า</h3>
                 <p id="totalIncome" style="color: #4cd137; font-size: 1.5rem;">0.00</p>
             </div>
             <!-- Card เงินออก -->
             <div class="summary-card" style="background: rgba(207, 102, 121, 0.1); border-color: #cf6679;">
-                <h3 style="font-size: 0.75rem; color: #cf6679; margin:0;">💸เงินออก</h3>
+                <h3 style="font-size: 0.75rem; color: #cf6679; margin:0;">💸 เงินออก</h3>
                 <p id="totalExpense" style="color: #cf6679; font-size: 1.5rem;">0.00</p>
             </div>
         </div>
 
         <!-- PART 6: เงินคงเหลือสุทธิ -->
         <div class="summary-card">
-            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">💵 เงินเหลือ</h3>
+            <h3 style="font-size: 0.85rem; color: var(--text-dim); margin:0;">💵 เงินคงเหลือสุทธิ</h3>
             <!-- สีจะเปลี่ยนตามค่า: บวก=เขียว, ลบ=แดง, ศูนย์=ม่วง -->
             <p id="netBalance">0.00</p>
         </div>
@@ -623,15 +623,15 @@
         <!-- PART 7: สถิติ 3 ช่อง (จำนวนรายการ / จ่ายเฉลี่ย / รับเฉลี่ย) -->
         <div class="stats-grid">
             <div class="summary-card">
-                <h3>📊 รายการ</h3>
+                <h3>📊 จำนวนรายการ</h3>
                 <p id="totalItems">0</p>
             </div>
             <div class="summary-card">
-                <h3>💸 จ่าย/วัน</h3>
+                <h3>💸 เงินที่จ่าย/วัน</h3>
                 <p id="avgExpense">0</p>
             </div>
             <div class="summary-card">
-                <h3>💰 รับ/วัน</h3>
+                <h3>💰 เงินที่รับ/วัน</h3>
                 <p id="avgIncome">0</p>
             </div>
         </div>
