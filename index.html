@@ -134,6 +134,108 @@
         .finance-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .finance-summary .summary-card { margin-bottom: 0; }
 
+        /* ===== NEW: REAL FILTER TOGGLE ===== */
+        .real-filter-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-learn-card);
+            border: 1px solid var(--border-learn);
+            border-radius: 12px;
+            padding: 11px 14px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            gap: 10px;
+        }
+        .real-filter-toggle:hover { border-color: rgba(187,134,252,0.4); }
+        .real-filter-toggle.active { border-color: var(--accent); background: var(--accent-dim); }
+
+        .real-filter-label { font-size: 0.78rem; color: var(--text-learn-dim); line-height: 1.4; flex: 1; }
+        .real-filter-label strong { display: block; color: var(--text-learn); font-size: 0.82rem; margin-bottom: 2px; }
+
+        .toggle-switch {
+            width: 40px; height: 22px;
+            background: var(--border-learn);
+            border-radius: 11px;
+            position: relative;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+            transition: left 0.2s;
+        }
+        .real-filter-toggle.active .toggle-switch { background: var(--accent); }
+        .real-filter-toggle.active .toggle-switch::after { left: 21px; }
+
+        /* ===== NEW: GROWTH BADGE ===== */
+        .finance-card-wrapper { position: relative; }
+
+        .growth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-top: 6px;
+            letter-spacing: 0.3px;
+        }
+        .growth-badge.up-bad { background: rgba(248,113,113,0.15); color: var(--red); }
+        .growth-badge.up-good { background: rgba(74,222,128,0.15); color: var(--green); }
+        .growth-badge.down-good { background: rgba(74,222,128,0.15); color: var(--green); }
+        .growth-badge.down-bad { background: rgba(248,113,113,0.15); color: var(--red); }
+        .growth-badge.neutral { background: rgba(160,160,160,0.1); color: var(--text-dim); }
+
+        .growth-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* ===== GROWTH COMPARISON BOX (month view) ===== */
+        .growth-comparison-box {
+            background: var(--bg-learn-card);
+            border: 1px solid var(--border-learn);
+            border-radius: 12px;
+            padding: 13px 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .growth-comparison-box.visible { display: block; }
+        .growth-comparison-title {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-learn-dim);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .growth-comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .growth-comparison-item {
+            text-align: center;
+            padding: 9px 6px;
+            background: var(--bg-elevated);
+            border-radius: 9px;
+            border: 1px solid var(--border-learn);
+        }
+        .growth-comparison-item .gci-label { font-size: 0.6rem; color: var(--text-learn-dim); margin-bottom: 4px; }
+        .growth-comparison-item .gci-prev { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 2px; }
+        .growth-comparison-item .gci-curr { font-size: 0.88rem; font-weight: 600; margin-bottom: 3px; }
+        .growth-comparison-item .gci-badge { font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 20px; display: inline-block; }
+
         /* ==================== LEARN SECTION ==================== */
         #learnSection {
             display: none;
@@ -146,18 +248,15 @@
         .learn-header h1 { font-family: 'Noto Serif Thai', serif; font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1.3; }
         .learn-header p { font-size: 0.78rem; color: var(--text-learn-dim); margin-top: 6px; line-height: 1.6; }
 
-        /* Topic Pills */
         .topic-pills { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: none; margin-bottom: 4px; }
         .topic-pills::-webkit-scrollbar { display: none; }
         .pill { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border-learn); background: var(--bg-elevated); color: var(--text-learn-dim); font-size: 0.73rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: 'Sarabun', sans-serif; }
         .pill:hover { border-color: var(--accent); color: var(--accent); }
         .pill.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-        /* Topic Section */
         .topic-section { display: none; }
         .topic-section.visible { display: block; }
 
-        /* ==================== TOGGLE ARTICLE CARDS ==================== */
         .article-toggle {
             background: var(--bg-learn-card);
             border: 1px solid var(--border-learn);
@@ -237,7 +336,6 @@
 
         .article-lead { font-size: 0.82rem; color: var(--text-learn-dim); line-height: 1.7; }
 
-        /* Highlight Box */
         .highlight-box { border-radius: 12px; padding: 13px 15px; border-left: 3px solid; }
         .highlight-box .hb-label { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
         .highlight-box .hb-content { font-size: 0.81rem; line-height: 1.65; color: var(--text-learn); }
@@ -254,27 +352,23 @@
         .hb-blue { background: var(--blue-dim); border-color: var(--blue); }
         .hb-blue .hb-label { color: var(--blue); }
 
-        /* Breakdown */
         .breakdown { display: flex; gap: 7px; }
         .breakdown-item { flex: 1; border-radius: 10px; padding: 11px 8px; text-align: center; border: 1px solid var(--border-learn); }
         .breakdown-pct { font-family: 'Noto Serif Thai', serif; font-size: 1.3rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
         .breakdown-label { font-size: 0.62rem; color: var(--text-learn-dim); line-height: 1.3; }
 
-        /* Tips */
         .tips-list { display: flex; flex-direction: column; gap: 7px; }
         .tip-item { display: flex; gap: 9px; align-items: flex-start; padding: 9px 11px; background: var(--bg-elevated); border-radius: 9px; border: 1px solid var(--border-learn); }
         .tip-icon { font-size: 0.85rem; flex-shrink: 0; margin-top: 1px; }
         .tip-text { font-size: 0.77rem; color: var(--text-learn-dim); line-height: 1.55; }
         .tip-text strong { color: var(--text-learn); }
 
-        /* Steps */
         .steps-list { display: flex; flex-direction: column; gap: 7px; }
         .step-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: var(--bg-elevated); border-radius: 9px; border: 1px solid var(--border-learn); }
         .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
         .step-text { font-size: 0.77rem; color: var(--text-learn-dim); line-height: 1.55; }
         .step-text strong { color: var(--text-learn); }
 
-        /* Table */
         .compare-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
         .compare-table th { background: var(--bg-elevated); color: var(--accent); padding: 8px 10px; text-align: left; font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border-learn); }
         .compare-table td { padding: 8px 10px; border-bottom: 1px solid rgba(42,42,56,0.6); color: var(--text-learn-dim); vertical-align: top; line-height: 1.5; }
@@ -432,25 +526,49 @@
             <button class="secondary-btn" onclick="setDateRange('week')">สัปดาห์นี้</button>
             <button class="secondary-btn" onclick="setDateRange('month')">เดือนนี้</button>
         </div>
+
+        <!-- ===== NEW: REAL SPENDING TOGGLE ===== -->
+        <div class="real-filter-toggle" id="realFilterToggle" onclick="toggleRealFilter()">
+            <div style="font-size: 1.2rem; flex-shrink: 0;">🔍</div>
+            <div class="real-filter-label">
+                <strong>ดูรายจ่าย/รายรับ "จริงๆ"</strong>
+                ตัดหมวด สำรองจ่าย, เงินคืนสำรอง และ ลงทุน/ออมเงิน ออก
+            </div>
+            <div class="toggle-switch"></div>
+        </div>
+
         <div class="payment-filter" style="margin-bottom: 15px;">
-            <button class="active" onclick="filterByType('all')">🌟 ทั้งหมด</button>
-            <button onclick="filterByType('expense')">💸 เงินออก</button>
-            <button onclick="filterByType('income')">💰 เงินเข้า</button>
+            <button class="active" onclick="filterByType('all', this)">🌟 ทั้งหมด</button>
+            <button onclick="filterByType('expense', this)">💸 เงินออก</button>
+            <button onclick="filterByType('income', this)">💰 เงินเข้า</button>
         </div>
         <div class="payment-filter">
-            <button class="active" onclick="filterByPayment('all')">🌟 ทั้งหมด</button>
-            <button onclick="filterByPayment('เงินสด')">💵 เงินสด</button>
-            <button onclick="filterByPayment('โอนเงิน')">📱 โอนเงิน</button>
-            <button onclick="filterByPayment('บัตรเครดิต')">💳 บัตรเครดิต</button>
+            <button class="active" onclick="filterByPayment('all', this)">🌟 ทั้งหมด</button>
+            <button onclick="filterByPayment('เงินสด', this)">💵 เงินสด</button>
+            <button onclick="filterByPayment('โอนเงิน', this)">📱 โอนเงิน</button>
+            <button onclick="filterByPayment('บัตรเครดิต', this)">💳 บัตรเครดิต</button>
         </div>
+
+        <!-- ===== NEW: GROWTH COMPARISON BOX (shows only in month view) ===== -->
+        <div class="growth-comparison-box" id="growthComparisonBox">
+            <div class="growth-comparison-title">📊 เทียบกับเดือนที่แล้ว</div>
+            <div class="growth-comparison-grid" id="growthComparisonGrid"></div>
+        </div>
+
         <div class="finance-summary">
             <div class="summary-card" style="background: rgba(76, 209, 55, 0.1); border-color: #4cd137;">
                 <h3 style="font-size: 0.75rem; color: #4cd137; margin:0;">💰 เงินเข้า</h3>
-                <p id="totalIncome" style="color: #4cd137; font-size: 1.5rem;">0.00</p>
+                <div class="growth-row">
+                    <p id="totalIncome" style="color: #4cd137; font-size: 1.5rem; margin-bottom: 2px;">0.00</p>
+                    <div id="incomeGrowthBadge"></div>
+                </div>
             </div>
             <div class="summary-card" style="background: rgba(207, 102, 121, 0.1); border-color: #cf6679;">
                 <h3 style="font-size: 0.75rem; color: #cf6679; margin:0;">💸 เงินออก</h3>
-                <p id="totalExpense" style="color: #cf6679; font-size: 1.5rem;">0.00</p>
+                <div class="growth-row">
+                    <p id="totalExpense" style="color: #cf6679; font-size: 1.5rem; margin-bottom: 2px;">0.00</p>
+                    <div id="expenseGrowthBadge"></div>
+                </div>
             </div>
         </div>
         <div class="summary-card">
@@ -483,9 +601,7 @@
     </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- SECTION 3: LEARN PAGE                                        -->
-<!-- ============================================================ -->
+<!-- SECTION 3: LEARN PAGE -->
 <div id="learnSection">
     <div class="learn-header">
         <div class="learn-header-eyebrow">MoniDay Learn</div>
@@ -500,7 +616,7 @@
         <button class="pill" onclick="showTopic('debt', this)">💳 จัดการหนี้</button>
     </div>
 
-    <!-- ===== TOPIC: งบประมาณ ===== -->
+    <!-- TOPIC: งบประมาณ -->
     <div class="topic-section visible" id="topic-budget">
         <div class="section-header">
             <div class="section-header-icon">🎯</div>
@@ -510,8 +626,6 @@
             </div>
             <div class="section-count">5 บทความ</div>
         </div>
-
-        <!-- บทความ 1 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--accent-dim);">🎯</div>
@@ -525,18 +639,9 @@
                 <div class="article-body-inner">
                     <p class="article-lead">กฎนี้แบ่งเงินเดือนออกเป็น 3 ส่วน ใช้ได้กับทุกระดับรายได้ ไม่ต้องวางแผนซับซ้อน</p>
                     <div class="breakdown">
-                        <div class="breakdown-item" style="background: var(--red-dim); border-color: var(--red);">
-                            <div class="breakdown-pct" style="color: var(--red)">50%</div>
-                            <div class="breakdown-label">ความจำเป็น<br>ค่าเช่า อาหาร ค่าน้ำไฟ</div>
-                        </div>
-                        <div class="breakdown-item" style="background: var(--blue-dim); border-color: var(--blue);">
-                            <div class="breakdown-pct" style="color: var(--blue)">30%</div>
-                            <div class="breakdown-label">ต้องการ<br>ท่องเที่ยว ของฟุ่มเฟือย</div>
-                        </div>
-                        <div class="breakdown-item" style="background: var(--green-dim); border-color: var(--green);">
-                            <div class="breakdown-pct" style="color: var(--green)">20%</div>
-                            <div class="breakdown-label">ออม & ลงทุน<br>กองทุนฉุกเฉิน</div>
-                        </div>
+                        <div class="breakdown-item" style="background: var(--red-dim); border-color: var(--red);"><div class="breakdown-pct" style="color: var(--red)">50%</div><div class="breakdown-label">ความจำเป็น<br>ค่าเช่า อาหาร ค่าน้ำไฟ</div></div>
+                        <div class="breakdown-item" style="background: var(--blue-dim); border-color: var(--blue);"><div class="breakdown-pct" style="color: var(--blue)">30%</div><div class="breakdown-label">ต้องการ<br>ท่องเที่ยว ของฟุ่มเฟือย</div></div>
+                        <div class="breakdown-item" style="background: var(--green-dim); border-color: var(--green);"><div class="breakdown-pct" style="color: var(--green)">20%</div><div class="breakdown-label">ออม & ลงทุน<br>กองทุนฉุกเฉิน</div></div>
                     </div>
                     <div class="highlight-box hb-purple">
                         <div class="hb-label">ตัวอย่าง: เงินเดือน 30,000 บาท</div>
@@ -550,8 +655,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 2 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--blue-dim);">📊</div>
@@ -563,7 +666,7 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">วิธีทำงบแบบ Zero-Based คือการกำหนดว่าเงินทุกบาทจะถูกใช้ไปเพื่ออะไร จนรายรับ – รายจ่าย = 0 (ไม่ใช่ใช้หมดนะ! แต่แบ่งหน้าที่ครบ)</p>
+                    <p class="article-lead">วิธีทำงบแบบ Zero-Based คือการกำหนดว่าเงินทุกบาทจะถูกใช้ไปเพื่ออะไร จนรายรับ – รายจ่าย = 0</p>
                     <div class="highlight-box hb-blue">
                         <div class="hb-label">วิธีทำ Zero-Based Budget</div>
                         <div class="hb-content">1. เขียนรายรับทั้งหมดในเดือนนั้น<br>2. แจกแจงรายจ่ายทุกหมวด รวมถึงการออมและลงทุน<br>3. หักจนเหลือ 0 — ทุกบาทมีที่ทาง</div>
@@ -572,13 +675,10 @@
                     <div class="tips-list">
                         <div class="tip-item"><div class="tip-icon">📱</div><div class="tip-text"><strong>ใช้ MoniDay ช่วย</strong> — บันทึกทุกรายการ แล้วดูในหน้าสรุปว่าแต่ละหมวดใช้ไปเท่าไหร่</div></div>
                         <div class="tip-item"><div class="tip-icon">🔁</div><div class="tip-text"><strong>ทำทุกต้นเดือน</strong> — รายได้และค่าใช้จ่ายแต่ละเดือนต่างกัน ต้องวางแผนใหม่ทุกครั้ง</div></div>
-                        <div class="tip-item"><div class="tip-icon">⚡</div><div class="tip-text"><strong>ข้อดีกว่า 50/30/20</strong> — เห็นภาพรวมชัดกว่า เหมาะกับคนที่รายได้ไม่สม่ำเสมอ เช่น ฟรีแลนซ์</div></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 3 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--gold-dim);">🛒</div>
@@ -593,18 +693,15 @@
                     <p class="article-lead">หลายคนสงสัยว่าเงินหายไปไหน ทั้งที่ไม่ได้ซื้ออะไรใหญ่ — ต้นตอคือค่าใช้จ่ายแฝงที่สะสมทุกวัน</p>
                     <div class="highlight-box hb-red">
                         <div class="hb-label">⚠️ ค่าใช้จ่ายแฝงที่พบบ่อย</div>
-                        <div class="hb-content">• <strong>Subscription</strong> ที่ไม่ได้ใช้แล้ว (Netflix, Spotify, App premium)<br>• <strong>กาแฟ/ชา</strong> วันละ 60-100 บาท = เดือนละ 1,800–3,000 บาท<br>• <strong>ค่าจอดรถ</strong> ทุกวัน<br>• <strong>ค่าส่งอาหาร</strong> สะสมต่อเดือน</div>
+                        <div class="hb-content">• <strong>Subscription</strong> ที่ไม่ได้ใช้แล้ว<br>• <strong>กาแฟ/ชา</strong> วันละ 60-100 บาท = เดือนละ 1,800–3,000 บาท<br>• <strong>ค่าจอดรถ</strong> ทุกวัน<br>• <strong>ค่าส่งอาหาร</strong> สะสมต่อเดือน</div>
                         <div class="hb-example">💡 กาแฟ 80 บาท/วัน × 30 วัน = 2,400 บาท/เดือน = 28,800 บาท/ปี!</div>
                     </div>
                     <div class="tips-list">
                         <div class="tip-item"><div class="tip-icon">🔍</div><div class="tip-text"><strong>Subscription Audit</strong> — ทุก 3 เดือน เปิดดู statement ธนาคารและตัดสิ่งที่ไม่ใช้ทิ้ง</div></div>
-                        <div class="tip-item"><div class="tip-icon">☕</div><div class="tip-text"><strong>Latte Factor</strong> — ลองทำกาแฟเองสัปดาห์ละ 3 วัน ประหยัดได้เดือนละ 1,000+ บาท</div></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 4 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--green-dim);">🏦</div>
@@ -616,21 +713,15 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">วิธีคลาสสิกที่ได้ผลจริง — แบ่งเงินสดใส่ซองตามหมวดหมู่ เมื่อซองหมดก็หมด ไม่มีการกู้ยืม</p>
+                    <p class="article-lead">วิธีคลาสสิกที่ได้ผลจริง — แบ่งเงินสดใส่ซองตามหมวดหมู่ เมื่อซองหมดก็หมด</p>
                     <div class="highlight-box hb-green">
                         <div class="hb-label">ตัวอย่างการแบ่งซอง</div>
-                        <div class="hb-content">🍚 ซองอาหาร: 6,000 บาท<br>🚌 ซองเดินทาง: 2,000 บาท<br>🎮 ซองบันเทิง: 1,500 บาท<br>🛍️ ซองช้อปปิ้ง: 2,000 บาท<br>🆘 ซองฉุกเฉิน: 1,000 บาท</div>
+                        <div class="hb-content">🍚 ซองอาหาร: 6,000 บาท<br>🚌 ซองเดินทาง: 2,000 บาท<br>🎮 ซองบันเทิง: 1,500 บาท<br>🛍️ ซองช้อปปิ้ง: 2,000 บาท</div>
                         <div class="hb-example">เมื่อซองบันเทิงหมด = หยุดซื้อ ไม่แตะซองอื่น</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">📲</div><div class="tip-text"><strong>ทำดิจิทัลได้</strong> — ใช้หลายบัญชีธนาคารแทนซอง โอนเงินเข้าบัญชีแต่ละวัตถุประสงค์ทันทีที่ได้เงินเดือน</div></div>
-                        <div class="tip-item"><div class="tip-icon">🎯</div><div class="tip-text"><strong>เหมาะกับใคร</strong> — คนที่รู้สึกว่าควบคุมการใช้เงินไม่ได้ หรือมักใช้เกินงบทุกเดือน</div></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 5 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--accent-dim);">🎯</div>
@@ -642,22 +733,17 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">เป้าหมายที่ดีต้องชัดเจน วัดได้ และมีเส้นตายจริงๆ ไม่ใช่แค่ "อยากมีเงินเก็บมากขึ้น"</p>
+                    <p class="article-lead">เป้าหมายที่ดีต้องชัดเจน วัดได้ และมีเส้นตายจริงๆ</p>
                     <div class="highlight-box hb-purple">
                         <div class="hb-label">SMART Goal สำหรับการเงิน</div>
                         <div class="hb-content"><strong>S</strong>pecific: เก็บเงิน 100,000 บาท<br><strong>M</strong>easurable: วัดได้จากยอดบัญชี<br><strong>A</strong>chievable: ออม 8,300/เดือน<br><strong>R</strong>elevant: เพื่อดาวน์รถ<br><strong>T</strong>ime-bound: ภายใน 12 เดือน</div>
-                    </div>
-                    <div class="steps-list">
-                        <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>แบ่งเป้าใหญ่เป็นเป้ารายเดือน</strong> — 100,000 ÷ 12 = 8,333 บาท/เดือน ดูไม่น่ากลัวเลย</div></div>
-                        <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>สร้าง Milestone</strong> — ทุก 25,000 บาทให้รางวัลตัวเองเล็กน้อย เพื่อรักษา momentum</div></div>
-                        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Review ทุกเดือน</strong> — ถ้าเดือนไหนออมไม่ถึง ต้องชดเชยเดือนหน้า ไม่ใช่ยกเลิกเป้า</div></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== TOPIC: ออมเงิน ===== -->
+    <!-- TOPIC: ออมเงิน -->
     <div class="topic-section" id="topic-saving">
         <div class="section-header">
             <div class="section-header-icon">💰</div>
@@ -667,8 +753,6 @@
             </div>
             <div class="section-count">5 บทความ</div>
         </div>
-
-        <!-- บทความ 1 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--green-dim);">🆘</div>
@@ -680,21 +764,15 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ก่อนลงทุน ต้องสร้างกองทุนฉุกเฉินก่อนเสมอ เพราะถ้าเกิดเหตุไม่คาดฝัน เงินลงทุนที่ขายผิดจังหวะอาจขาดทุนหนัก</p>
+                    <p class="article-lead">ก่อนลงทุน ต้องสร้างกองทุนฉุกเฉินก่อนเสมอ</p>
                     <div class="highlight-box hb-green">
                         <div class="hb-label">เป้าหมายกองทุนฉุกเฉิน</div>
-                        <div class="hb-content">เก็บเงินสำรอง <strong>3–6 เท่าของค่าใช้จ่ายต่อเดือน</strong><br>ฝากไว้ในบัญชีออมทรัพย์หรือกองทุนตลาดเงิน ห้ามแตะนอกจากเหตุฉุกเฉินจริงๆ</div>
+                        <div class="hb-content">เก็บเงินสำรอง <strong>3–6 เท่าของค่าใช้จ่ายต่อเดือน</strong></div>
                         <div class="hb-example">ค่าใช้จ่าย/เดือน = 15,000 บาท → ต้องมีสำรอง 45,000–90,000 บาท</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">🏦</div><div class="tip-text"><strong>ฝากไว้ที่ไหน</strong> — บัญชีออมทรัพย์ดอกสูง เช่น ธนาคารออนไลน์ที่ให้ดอก 1.5-2% หรือกองทุนตลาดเงิน</div></div>
-                        <div class="tip-item"><div class="tip-icon">🚫</div><div class="tip-text"><strong>ห้ามแตะเพื่อ</strong> — ซื้อของ, ท่องเที่ยว, หรือโอกาสลงทุน — มีไว้เฉพาะตกงาน/ป่วย/อุบัติเหตุ</div></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 2 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--accent-dim);">🛡️</div>
@@ -706,23 +784,15 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">SSF และ RMF คือกองทุนลดหย่อนภาษีที่คนทำงานควรรู้จัก ต่างกันที่เงื่อนไขการถือครองและวัตถุประสงค์</p>
                     <table class="compare-table">
                         <tr><th>เงื่อนไข</th><th>SSF</th><th>RMF</th></tr>
-                        <tr><td>ลดหย่อนได้</td><td>30% ของรายได้ สูงสุด 200,000</td><td>30% ของรายได้</td></tr>
-                        <tr><td>ระยะถือครอง</td><td>10 ปี นับจากวันซื้อ</td><td>ถึงอายุ 55 ปี (อย่างน้อย 5 ปี)</td></tr>
-                        <tr><td>ต้องซื้อทุกปี</td><td>ไม่จำเป็น</td><td>ต้องซื้อทุกปีหรือปีเว้นปี</td></tr>
-                        <tr><td>เหมาะกับ</td><td>คนอยากลดภาษี ระยะกลาง</td><td>วางแผนเกษียณ</td></tr>
+                        <tr><td>ลดหย่อนได้</td><td>30% สูงสุด 200,000</td><td>30% ของรายได้</td></tr>
+                        <tr><td>ระยะถือครอง</td><td>10 ปี</td><td>ถึงอายุ 55 ปี</td></tr>
+                        <tr><td>เหมาะกับ</td><td>ลดภาษี ระยะกลาง</td><td>วางแผนเกษียณ</td></tr>
                     </table>
-                    <div class="highlight-box hb-purple">
-                        <div class="hb-label">ตัวอย่าง: รายได้ 40,000/เดือน</div>
-                        <div class="hb-content">ลงทุน SSF 4,800 บาท/เดือน (57,600/ปี)<br>→ ประหยัดภาษีได้ประมาณ <strong>8,640 บาท/ปี</strong> (ฐาน 15%)</div>
-                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 3 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--gold-dim);">🔄</div>
@@ -734,21 +804,14 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">Dollar-Cost Averaging หรือ DCA คือการซื้อกองทุนจำนวนเท่ากันทุกเดือน ไม่สนว่าตลาดขึ้นหรือลง ได้ผลดีกว่าการรอจังหวะสำหรับคนส่วนใหญ่</p>
+                    <p class="article-lead">Dollar-Cost Averaging คือการซื้อกองทุนจำนวนเท่ากันทุกเดือน ไม่สนว่าตลาดขึ้นหรือลง</p>
                     <div class="highlight-box hb-gold">
                         <div class="hb-label">ทำไม DCA ถึงได้ผล</div>
-                        <div class="hb-content">• ตลาดลง → ซื้อได้หน่วยมากขึ้นในราคาเดิม<br>• ตลาดขึ้น → หน่วยที่มีอยู่มีมูลค่าสูงขึ้น<br>• ต้นทุนเฉลี่ยต่อหน่วยต่ำกว่าการซื้อครั้งเดียว</div>
-                        <div class="hb-example">ซื้อ 3,000 บาทต่อเดือนสม่ำเสมอ ดีกว่ารอ "จังหวะดี" แล้วซื้อ 36,000 ครั้งเดียวปลายปี</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">📅</div><div class="tip-text"><strong>ตั้งหักอัตโนมัติ</strong> — ตั้ง auto invest วันที่ 1 ของเดือน หรือวันถัดจากรับเงินเดือน</div></div>
-                        <div class="tip-item"><div class="tip-icon">😤</div><div class="tip-text"><strong>อย่าดูทุกวัน</strong> — DCA ใช้ความอดทน ยิ่งดูบ่อย ยิ่งอยากขายตอนลง ซึ่งขัดกับหลักการ</div></div>
+                        <div class="hb-content">• ตลาดลง → ซื้อได้หน่วยมากขึ้น<br>• ตลาดขึ้น → หน่วยที่มีอยู่มีมูลค่าสูงขึ้น</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 4 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--blue-dim);">🎪</div>
@@ -760,18 +823,14 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ออมเงินไม่ใช่เรื่องของความตั้งใจเพียงอย่างเดียว แต่คือการออกแบบระบบที่ทำให้การออมง่ายและอัตโนมัติ</p>
                     <div class="steps-list">
-                        <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Pay Yourself First</strong> — โอนเงินออมทันทีที่รับเงินเดือน ก่อนใช้จ่ายอื่นใด</div></div>
-                        <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>52-Week Challenge</strong> — สัปดาห์ที่ 1 ออม 100 บาท, สัปดาห์ที่ 2 ออม 200 บาท... ครบปีได้ 137,800 บาท</div></div>
-                        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>ออม "เงินพิเศษ" ครึ่งนึง</strong> — โบนัส, เงินคืนภาษี, เงินของขวัญ ออมครึ่งนึง ใช้ครึ่งนึง</div></div>
-                        <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>Round-Up Savings</strong> — ทุกครั้งที่จ่ายเงิน ปัดเศษขึ้นและเก็บส่วนต่าง เช่น จ่าย 73 บาท เก็บ 27 บาท</div></div>
+                        <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Pay Yourself First</strong> — โอนเงินออมทันทีที่รับเงินเดือน</div></div>
+                        <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>52-Week Challenge</strong> — สัปดาห์ที่ 1 ออม 100 บาท, สัปดาห์ที่ 2 ออม 200 บาท...</div></div>
+                        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>ออม "เงินพิเศษ" ครึ่งนึง</strong> — โบนัส, เงินคืนภาษี ออมครึ่ง ใช้ครึ่ง</div></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 5 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--red-dim);">🎯</div>
@@ -783,22 +842,16 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ยิ่งเริ่มออมเพื่อเกษียณเร็ว ยิ่งใช้เงินน้อยลงต่อเดือน เพราะดอกเบี้ยทบต้นทำงานให้นานกว่า</p>
                     <div class="highlight-box hb-red">
-                        <div class="hb-label">⏰ เริ่มช้า vs เริ่มเร็ว</div>
-                        <div class="hb-content">เป้าหมาย: มีเงิน 5 ล้านบาท ตอนอายุ 60<br><br>🟢 เริ่มอายุ 25 → ออมเพียง <strong>3,500 บาท/เดือน</strong><br>🟡 เริ่มอายุ 35 → ต้องออม <strong>7,500 บาท/เดือน</strong><br>🔴 เริ่มอายุ 45 → ต้องออม <strong>19,000 บาท/เดือน</strong></div>
-                        <div class="hb-example">สมมติผลตอบแทนเฉลี่ย 7%/ปี — ต่างกัน 5x เพราะเริ่มช้าแค่ 20 ปี!</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">🥇</div><div class="tip-text"><strong>ลำดับที่ถูก</strong>: กองทุนฉุกเฉิน → ชำระหนี้ดอกสูง → RMF/SSF → ลงทุนทั่วไป</div></div>
-                        <div class="tip-item"><div class="tip-icon">🎯</div><div class="tip-text"><strong>เป้าหมายเกษียณ</strong> — ต้องการรายได้เดือนละเท่าไหร่? คูณด้วย 300 = เงินที่ต้องมีตอนเกษียณ</div></div>
+                        <div class="hb-label">⏰ เริ่มช้า vs เริ่มเร็ว (เป้า 5 ล้าน อายุ 60)</div>
+                        <div class="hb-content">🟢 เริ่มอายุ 25 → ออมเพียง <strong>3,500 บาท/เดือน</strong><br>🟡 เริ่มอายุ 35 → ต้องออม <strong>7,500 บาท/เดือน</strong><br>🔴 เริ่มอายุ 45 → ต้องออม <strong>19,000 บาท/เดือน</strong></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== TOPIC: ลงทุน ===== -->
+    <!-- TOPIC: ลงทุน -->
     <div class="topic-section" id="topic-invest">
         <div class="section-header">
             <div class="section-header-icon">📈</div>
@@ -808,8 +861,6 @@
             </div>
             <div class="section-count">5 บทความ</div>
         </div>
-
-        <!-- บทความ 1 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--gold-dim);">🏗️</div>
@@ -821,21 +872,13 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">การลงทุนไม่ซับซ้อน แต่ต้องเข้าใจหลักการพื้นฐานก่อน มิฉะนั้นอาจขาดทุนจากความเข้าใจผิด</p>
                     <div class="highlight-box hb-gold">
                         <div class="hb-label">3 กฎทองก่อนลงทุน</div>
-                        <div class="hb-content">1. <strong>อย่าลงทุนเงินที่ต้องใช้</strong> ภายใน 3–5 ปี<br>2. <strong>กระจายความเสี่ยง</strong> ไม่ใส่ทุกอย่างในสินทรัพย์เดียว<br>3. <strong>ลงทุนระยะยาว</strong> ตลาดผันผวนระยะสั้นเสมอ</div>
-                    </div>
-                    <div class="steps-list">
-                        <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>รู้จัก Risk Profile ตัวเอง</strong> — คุณรับการขาดทุน 20% ได้ไหม? ถ้าไม่ได้ ต้องเลือกสินทรัพย์ที่ความเสี่ยงต่ำกว่า</div></div>
-                        <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>มีกองทุนฉุกเฉินก่อน</strong> — ถ้ายังไม่มี อย่าเพิ่งลงทุน เพราะอาจถูกบังคับขายตอนตลาดลง</div></div>
-                        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>ศึกษาสินทรัพย์ที่จะลงทุน</strong> — เข้าใจว่ามันคืออะไร ทำเงินได้ยังไง และเสี่ยงอะไร</div></div>
+                        <div class="hb-content">1. <strong>อย่าลงทุนเงินที่ต้องใช้</strong> ภายใน 3–5 ปี<br>2. <strong>กระจายความเสี่ยง</strong><br>3. <strong>ลงทุนระยะยาว</strong></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 2 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--blue-dim);">📊</div>
@@ -847,21 +890,13 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ETF (Exchange Traded Fund) คือกองทุนรวมที่ซื้อขายได้เหมือนหุ้น กระจายความเสี่ยงอัตโนมัติ ค่าธรรมเนียมต่ำ เหมาะกับนักลงทุนมือใหม่</p>
                     <div class="highlight-box hb-blue">
                         <div class="hb-label">ETF ไทยที่น่าสนใจ</div>
-                        <div class="hb-content">• <strong>TDEX</strong> — ติดตาม SET50 ดัชนีหุ้นไทย 50 บริษัทใหญ่<br>• <strong>GOLD ETF</strong> — ลงทุนในทองคำ ป้องกันเงินเฟ้อ<br>• <strong>กองทุน S&P500</strong> — ลงทุนในตลาดหุ้นสหรัฐฯ</div>
-                        <div class="hb-example">ซื้อ TDEX 1 หน่วย = ลงทุนใน 50 บริษัทใหญ่ไทยพร้อมกัน ไม่ต้องเลือกหุ้นเอง</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">💰</div><div class="tip-text"><strong>ค่าธรรมเนียมต่ำมาก</strong> — ETF มักเรียกเก็บแค่ 0.1–0.5% ต่อปี เทียบกับกองทุนทั่วไปที่ 1–2%</div></div>
-                        <div class="tip-item"><div class="tip-icon">📱</div><div class="tip-text"><strong>เริ่มต้นได้จาก</strong> — แอปโบรกเกอร์ เช่น Jitta Wealth, FINNOMENA, หรือ แอปธนาคาร</div></div>
+                        <div class="hb-content">• <strong>TDEX</strong> — ติดตาม SET50<br>• <strong>GOLD ETF</strong> — ลงทุนในทองคำ<br>• <strong>กองทุน S&P500</strong> — ตลาดหุ้นสหรัฐฯ</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 3 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--gold-dim);">🥇</div>
@@ -873,21 +908,13 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ทองคำเป็นสินทรัพย์ป้องกันความเสี่ยง มักขึ้นเมื่อเศรษฐกิจไม่ดีหรือเงินเฟ้อสูง แต่ไม่ควรถือเยอะเกินไป</p>
                     <div class="highlight-box hb-gold">
                         <div class="hb-label">สัดส่วนที่แนะนำ</div>
-                        <div class="hb-content">ถือทองคำ <strong>5–15%</strong> ของพอร์ตลงทุนทั้งหมด<br>ไม่ควรเกินนี้ เพราะทองไม่จ่ายเงินปันผลหรือดอกเบี้ย</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">📱</div><div class="tip-text"><strong>ซื้อทองออนไลน์</strong> — AAAGOLD, GoldTraders ซื้อได้ตั้งแต่ 0.01 กรัม ไม่ต้องมีทุนมาก</div></div>
-                        <div class="tip-item"><div class="tip-icon">📈</div><div class="tip-text"><strong>GOLD ETF</strong> — ซื้อผ่านโบรกเกอร์ ไม่ต้องเก็บทองจริง สะดวกกว่า ค่าธรรมเนียมต่ำ</div></div>
-                        <div class="tip-item"><div class="tip-icon">🪙</div><div class="tip-text"><strong>ทองคำแท่ง</strong> — ซื้อร้านทองได้เลย แต่ spread (ส่วนต่างราคาซื้อ-ขาย) สูงกว่า ETF</div></div>
+                        <div class="hb-content">ถือทองคำ <strong>5–15%</strong> ของพอร์ตลงทุนทั้งหมด</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 4 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--green-dim);">🌱</div>
@@ -899,20 +926,13 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">Albert Einstein เรียกดอกเบี้ยทบต้นว่า "สิ่งมหัศจรรย์อันดับ 8 ของโลก" และนั่นคือเหตุผลว่าทำไมต้องเริ่มเร็ว</p>
                     <div class="highlight-box hb-green">
                         <div class="hb-label">🧮 ลงทุน 3,000 บาท/เดือน ผลตอบแทน 7%/ปี</div>
-                        <div class="hb-content">• 10 ปี → <strong>520,000 บาท</strong> (ลงทุนไปจริง 360,000)<br>• 20 ปี → <strong>1,570,000 บาท</strong> (ลงทุนไปจริง 720,000)<br>• 30 ปี → <strong>3,650,000 บาท</strong> (ลงทุนไปจริง 1,080,000)</div>
-                        <div class="hb-example">💡 ลงทุน 30 ปี เงินงอกขึ้น 3.4 เท่าของที่ลงทุนไป!</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">⏰</div><div class="tip-text"><strong>เวลาสำคัญที่สุด</strong> — เริ่มอายุ 25 vs 35 ต่างกันเพียง 10 ปี แต่เงินต่างกันกว่า 3 ล้านบาท</div></div>
+                        <div class="hb-content">• 10 ปี → <strong>520,000 บาท</strong><br>• 20 ปี → <strong>1,570,000 บาท</strong><br>• 30 ปี → <strong>3,650,000 บาท</strong></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 5 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--accent-dim);">🌍</div>
@@ -924,22 +944,16 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">การกระจายความเสี่ยง (Diversification) คือการไม่ใส่ไข่ทั้งหมดในตะกร้าใบเดียว เป็นกฎข้อสำคัญที่สุดของการลงทุน</p>
                     <div class="highlight-box hb-purple">
                         <div class="hb-label">พอร์ตตัวอย่างสำหรับมือใหม่</div>
-                        <div class="hb-content">🇹🇭 หุ้นไทย (ETF): <strong>30%</strong><br>🌎 หุ้นต่างประเทศ (S&P500): <strong>30%</strong><br>🥇 ทองคำ: <strong>10%</strong><br>💵 พันธบัตร/ตราสารหนี้: <strong>20%</strong><br>🏦 เงินสด/ตลาดเงิน: <strong>10%</strong></div>
-                        <div class="hb-example">เมื่อหุ้นลง ทองและตราสารหนี้มักขึ้น ช่วยลดความผันผวนรวมของพอร์ต</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">⚖️</div><div class="tip-text"><strong>Rebalance ทุกปี</strong> — ถ้าหุ้นขึ้นมากจน % เกินเป้า ให้ขายบางส่วนมาซื้อสินทรัพย์อื่นที่ % ต่ำลง</div></div>
-                        <div class="tip-item"><div class="tip-icon">📊</div><div class="tip-text"><strong>ปรับตาม Risk Profile</strong> — อายุน้อย รับความเสี่ยงสูงได้มากกว่า เพิ่มสัดส่วนหุ้นได้</div></div>
+                        <div class="hb-content">🇹🇭 หุ้นไทย: <strong>30%</strong> · 🌎 S&P500: <strong>30%</strong> · 🥇 ทอง: <strong>10%</strong> · 💵 ตราสารหนี้: <strong>20%</strong> · 🏦 เงินสด: <strong>10%</strong></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== TOPIC: จัดการหนี้ ===== -->
+    <!-- TOPIC: จัดการหนี้ -->
     <div class="topic-section" id="topic-debt">
         <div class="section-header">
             <div class="section-header-icon">💳</div>
@@ -949,8 +963,6 @@
             </div>
             <div class="section-count">5 บทความ</div>
         </div>
-
-        <!-- บทความ 1 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--red-dim);">⚠️</div>
@@ -962,21 +974,14 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">บัตรเครดิตมีดอกเบี้ย 18–28% ต่อปี ซึ่งสูงกว่าผลตอบแทนการลงทุนส่วนใหญ่ การจ่ายขั้นต่ำเพียงอย่างเดียวคือกับดัก</p>
                     <div class="highlight-box hb-red">
                         <div class="hb-label">⚠️ หนี้ 10,000 บาท จ่ายขั้นต่ำ 500 บาท</div>
-                        <div class="hb-content">→ ใช้เวลา <strong>2 ปี 4 เดือน</strong> จึงหมด<br>→ เสียดอกเบี้ยรวม <strong>2,800+ บาท</strong></div>
-                        <div class="hb-example">แต่ถ้าจ่าย 2,000 บาท/เดือน → หมดใน 6 เดือน เสียดอกแค่ 700 บาท ประหยัดไป 2,100 บาท!</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">🚨</div><div class="tip-text"><strong>ห้ามจ่ายแค่ขั้นต่ำ</strong> — ถ้าทำได้ ให้จ่ายเต็มจำนวนทุกเดือน ไม่เสียดอกสักบาท</div></div>
-                        <div class="tip-item"><div class="tip-icon">💳</div><div class="tip-text"><strong>ใช้บัตรให้ถูกวิธี</strong> — บัตรเครดิตดีมากถ้าจ่ายเต็ม ได้ cashback/แต้มฟรี ไม่มีดอก</div></div>
+                        <div class="hb-content">→ ใช้เวลา <strong>2 ปี 4 เดือน</strong> จึงหมด → เสียดอกรวม <strong>2,800+ บาท</strong></div>
+                        <div class="hb-example">จ่าย 2,000/เดือน → หมดใน 6 เดือน เสียดอกแค่ 700 บาท</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 2 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--accent-dim);">🌊</div>
@@ -988,25 +993,17 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">สองวิธียอดนิยมในการชำระหนี้หลายก้อน เลือกให้เหมาะกับนิสัยตัวเอง</p>
                     <div class="highlight-box hb-purple">
-                        <div class="hb-label">Avalanche Method — ประหยัดดอกเบี้ยสูงสุด</div>
-                        <div class="hb-content">จ่ายขั้นต่ำหนี้ทุกก้อน แล้วเอาเงินที่เหลือ <strong>ยิงไปที่หนี้ดอกเบี้ยสูงสุดก่อน</strong></div>
-                        <div class="hb-example">ลำดับ: บัตรเครดิต 28% → บัตรกดเงินสด 22% → สินเชื่อส่วนบุคคล 15% → รถ 5%</div>
+                        <div class="hb-label">Avalanche — ประหยัดดอกสูงสุด</div>
+                        <div class="hb-content">ยิงเงินเพิ่มไปที่ <strong>หนี้ดอกสูงสุดก่อน</strong></div>
                     </div>
                     <div class="highlight-box hb-green">
-                        <div class="hb-label">Snowball Method — ชนะใจตัวเอง</div>
-                        <div class="hb-content">จ่ายหนี้ก้อน <strong>เล็กที่สุดก่อน</strong> เมื่อหมดแล้วเอาเงินที่เคยจ่ายรวมกับก้อนถัดไป</div>
-                        <div class="hb-example">ได้แรงจูงใจจากการเห็นผล แม้เสียดอกรวมมากกว่า Avalanche เล็กน้อย</div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">🧠</div><div class="tip-text"><strong>เลือกวิธีที่ทำได้จริง</strong> — Avalanche ดีกว่าในทางคณิตศาสตร์ แต่ Snowball ดีกว่าถ้าคุณต้องการแรงจูงใจ</div></div>
+                        <div class="hb-label">Snowball — ชนะใจตัวเอง</div>
+                        <div class="hb-content">จ่ายหนี้ก้อน <strong>เล็กที่สุดก่อน</strong> สร้างแรงจูงใจ</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 3 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--blue-dim);">🔄</div>
@@ -1018,22 +1015,13 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ถ้าหนี้ดอกสูง อาจขอ Refinance หรือย้ายหนี้ไปดอกต่ำกว่า ช่วยประหยัดดอกเบี้ยได้มาก</p>
                     <div class="highlight-box hb-blue">
-                        <div class="hb-label">Balance Transfer บัตรเครดิต</div>
-                        <div class="hb-content">บางธนาคารมีโปรโมชั่น Balance Transfer ดอก 0–0.99%/เดือน ช่วง 3–6 เดือนแรก<br>ย้ายหนี้ดอก 28%/ปี มาไว้ที่นี่ แล้วรีบจ่ายให้หมดก่อนโปรหมด</div>
-                        <div class="hb-example">⚠️ ต้องระวัง: หลังโปรหมดดอกจะกลับสูงเหมือนเดิม ต้องวางแผนให้จ่ายหมดก่อน</div>
-                    </div>
-                    <div class="highlight-box hb-green">
-                        <div class="hb-label">Debt Consolidation รวมหนี้</div>
-                        <div class="hb-content">ขอสินเชื่อก้อนใหม่ดอกต่ำกว่า มาปิดหนี้หลายก้อนดอกสูง ได้ยอดชำระรายเดือนที่ต่ำลง</div>
-                        <div class="hb-example">รวมหนี้บัตร 28% + สินเชื่อส่วนบุคคล 15% → สินเชื่อรวม 8%/ปี ลดภาระได้มาก</div>
+                        <div class="hb-label">Balance Transfer</div>
+                        <div class="hb-content">ย้ายหนี้ดอก 28%/ปี มาไว้โปร 0% แล้วรีบจ่ายให้หมดก่อนโปรหมด</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 4 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--gold-dim);">🏠</div>
@@ -1045,20 +1033,17 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">ไม่ใช่หนี้ทุกประเภทจะแย่ มีหนี้บางอย่างที่ช่วยสร้างความมั่งคั่ง และหนี้บางอย่างที่กัดกินชีวิต</p>
                     <div class="highlight-box hb-green">
-                        <div class="hb-label">✅ หนี้ดี (Good Debt)</div>
-                        <div class="hb-content">• <strong>สินเชื่อบ้าน</strong> — สินทรัพย์มักมีมูลค่าสูงขึ้น ดอกเบี้ยต่ำ ลดหย่อนภาษีได้<br>• <strong>สินเชื่อเพื่อการศึกษา</strong> — ลงทุนในตัวเอง เพิ่มรายได้ระยะยาว<br>• <strong>สินเชื่อธุรกิจ</strong> — ถ้าผลตอบแทนธุรกิจสูงกว่าดอกเบี้ย</div>
+                        <div class="hb-label">✅ หนี้ดี</div>
+                        <div class="hb-content">สินเชื่อบ้าน, การศึกษา, ธุรกิจที่ผลตอบแทนสูงกว่าดอก</div>
                     </div>
                     <div class="highlight-box hb-red">
-                        <div class="hb-label">❌ หนี้เลว (Bad Debt)</div>
-                        <div class="hb-content">• <strong>บัตรเครดิตคงค้าง</strong> — ดอก 28%/ปี ไม่มีสินทรัพย์หนุนหลัง<br>• <strong>สินเชื่อรถ</strong> — รถเสื่อมราคาทุกวัน<br>• <strong>บัตรกดเงินสด</strong> — ดอกสูงมาก ไม่มีสินทรัพย์ใดสร้างมูลค่า</div>
+                        <div class="hb-label">❌ หนี้เลว</div>
+                        <div class="hb-content">บัตรเครดิตคงค้าง 28%/ปี, รถ (เสื่อมราคา), บัตรกดเงินสด</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- บทความ 5 -->
         <div class="article-toggle">
             <div class="article-toggle-header" onclick="toggleArticle(this)">
                 <div class="article-toggle-icon" style="background: var(--green-dim);">🚀</div>
@@ -1070,16 +1055,12 @@
             </div>
             <div class="article-toggle-body">
                 <div class="article-body-inner">
-                    <p class="article-lead">แผนปฏิบัติการที่ทำได้จริง สำหรับคนที่ต้องการหลุดพ้นจากวงจรหนี้อย่างยั่งยืน</p>
                     <div class="steps-list">
-                        <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>รู้ว่าหนี้ทั้งหมดเท่าไหร่</strong> — ทำลิสต์หนี้ทุกก้อน พร้อมยอดคงเหลือ ดอกเบี้ย และยอดชำระขั้นต่ำ</div></div>
-                        <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>หยุดสร้างหนี้ใหม่</strong> — ตัดบัตรเครดิตที่ไม่จำเป็น หรือเอาไว้บ้าน ห้ามพกติดตัว</div></div>
-                        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>สร้างกองทุนฉุกเฉินเล็กๆ</strong> — 10,000–20,000 บาทก่อน เพื่อไม่ต้องกู้เพิ่มเมื่อเกิดเหตุ</div></div>
-                        <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>เลือกวิธีชำระ</strong> — Avalanche ถ้าอยากประหยัดดอก, Snowball ถ้าต้องการแรงจูงใจ</div></div>
-                        <div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>เพิ่มรายได้ขนาน</strong> — งานพิเศษ, ขายของ, หรือทักษะที่ทำเงินได้ เอาเงินพิเศษทั้งหมดโจมตีหนี้</div></div>
-                    </div>
-                    <div class="tips-list">
-                        <div class="tip-item"><div class="tip-icon">💪</div><div class="tip-text"><strong>ฉลองทุก Milestone</strong> — เมื่อปิดหนี้ก้อนหนึ่งได้ ให้รางวัลตัวเองเล็กน้อย เพื่อรักษาแรงจูงใจ</div></div>
+                        <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>รู้ว่าหนี้ทั้งหมดเท่าไหร่</strong> — ทำลิสต์ทุกก้อน</div></div>
+                        <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>หยุดสร้างหนี้ใหม่</strong> — ตัดบัตรที่ไม่จำเป็น</div></div>
+                        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>สร้างกองทุนฉุกเฉินเล็กๆ</strong> — 10,000–20,000 ก่อน</div></div>
+                        <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>เลือกวิธีชำระ</strong> — Avalanche หรือ Snowball</div></div>
+                        <div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>เพิ่มรายได้ขนาน</strong> — เอาเงินพิเศษโจมตีหนี้</div></div>
                     </div>
                 </div>
             </div>
@@ -1092,10 +1073,15 @@
 <script>
     let currentPaymentFilter = 'all';
     let currentTypeFilter = 'all';
+    let realFilterActive = false;
     let myChart = null;
     let map = null;
     let markers = [];
     const today = new Date().toISOString().split('T')[0];
+
+    // หมวดที่ตัดออกเมื่อเปิด "ดูจริงๆ"
+    const EXCLUDE_EXPENSE_CATS = ['สำรองจ่ายก่อน', 'ลงทุน/ออมเงิน'];
+    const EXCLUDE_INCOME_CATS  = ['เงินคืนสำรองจ่าย'];
 
     const categoryColors = {
         "อาหารมื้อหลัก": "#ff9f43", "เครื่องดื่ม": "#55efc4", "ของทานเล่น/ขนม": "#feca57",
@@ -1155,13 +1141,10 @@
     function toggleArticle(header) {
         const card = header.parentElement;
         const isOpen = card.classList.contains('open');
-
-        // ปิดทุกอันในหมวดเดียวกันก่อน
         const section = card.closest('.topic-section');
         section.querySelectorAll('.article-toggle.open').forEach(el => {
             if (el !== card) el.classList.remove('open');
         });
-
         card.classList.toggle('open', !isOpen);
     }
 
@@ -1173,88 +1156,114 @@
         document.getElementById('topic-' + topic).classList.add('visible');
     }
 
-    /* ===== FILTERS ===== */
-    function filterByPayment(method) {
-        currentPaymentFilter = method;
-        const paymentButtons = document.querySelectorAll('.payment-filter')[1].querySelectorAll('button');
-        paymentButtons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+    /* ===== NEW: REAL FILTER TOGGLE ===== */
+    function toggleRealFilter() {
+        realFilterActive = !realFilterActive;
+        const toggle = document.getElementById('realFilterToggle');
+        toggle.classList.toggle('active', realFilterActive);
         updateDashboard();
     }
 
-    function filterByType(type) {
+    /* ===== FILTERS ===== */
+    function filterByPayment(method, btn) {
+        currentPaymentFilter = method;
+        const paymentButtons = document.querySelectorAll('.payment-filter')[1].querySelectorAll('button');
+        paymentButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateDashboard();
+    }
+
+    function filterByType(type, btn) {
         currentTypeFilter = type;
         const typeButtons = document.querySelectorAll('.payment-filter')[0].querySelectorAll('button');
-        typeButtons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        typeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         updateDashboard();
     }
 
     function setDateRange(period) {
-        const today = new Date();
-        let startDate, endDate = today.toISOString().split('T')[0];
+        const now = new Date();
+        let startDate, endDate = now.toISOString().split('T')[0];
         if (period === 'today') {
             startDate = endDate;
         } else if (period === 'week') {
-            const weekAgo = new Date(today);
-            weekAgo.setDate(today.getDate() - 6);
+            const weekAgo = new Date(now);
+            weekAgo.setDate(now.getDate() - 6);
             startDate = weekAgo.toISOString().split('T')[0];
         } else if (period === 'month') {
-            startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
         }
         document.getElementById('filterStart').value = startDate;
         document.getElementById('filterEnd').value = endDate;
         updateDashboard();
     }
 
-    /* ===== FORM ===== */
-    function updateCategoryOptions() {
-        const type = document.getElementById('transactionType').value;
-        const expenseGroup = document.getElementById('expenseGroup');
-        const incomeGroup = document.getElementById('incomeGroup');
-        const categoryLabel = document.getElementById('categoryLabel');
-        if (type === 'expense') {
-            expenseGroup.style.display = '';
-            incomeGroup.style.display = 'none';
-            categoryLabel.textContent = 'หมวดหมู่ค่าใช้จ่าย';
-            document.getElementById('category').value = 'อาหารมื้อหลัก';
-        } else {
-            expenseGroup.style.display = 'none';
-            incomeGroup.style.display = '';
-            categoryLabel.textContent = 'หมวดหมู่รายรับ';
-            document.getElementById('category').value = 'เงินเดือน';
-        }
+    /* ===== NEW: GROWTH CALCULATION ===== */
+    function calcGrowth(current, previous) {
+        if (previous === 0 && current === 0) return null;
+        if (previous === 0) return null; // ไม่มีข้อมูลเดือนก่อน
+        return ((current - previous) / previous) * 100;
     }
 
-    function initForm() {
-        document.getElementById('date').value = today;
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('time').value = `${hours}:${minutes}`;
-        document.getElementById('transactionType').value = 'expense';
-        updateCategoryOptions();
-        document.getElementById('editIndex').value = "-1";
-        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
-        document.getElementById('editNotice').style.display = "none";
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((p) => {
-                const lat = p.coords.latitude.toFixed(6);
-                const lng = p.coords.longitude.toFixed(6);
-                document.getElementById('location').value = `${lat}, ${lng}`;
-                document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
-            });
+    function renderGrowthBadge(containerId, pct, isExpense) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        if (pct === null) { el.innerHTML = ''; return; }
+        const up = pct > 0;
+        const arrow = up ? '▲' : '▼';
+        const absPct = Math.abs(pct).toFixed(1);
+        // สำหรับรายจ่าย: ขึ้น = แย่ (แดง), ลง = ดี (เขียว)
+        // สำหรับรายรับ: ขึ้น = ดี (เขียว), ลง = แย่ (แดง)
+        let cls = '';
+        if (isExpense) {
+            cls = up ? 'up-bad' : 'down-good';
+        } else {
+            cls = up ? 'up-good' : 'down-bad';
         }
+        if (Math.abs(pct) < 0.1) cls = 'neutral';
+        el.innerHTML = `<span class="growth-badge ${cls}">${arrow} ${absPct}% vs เดือนก่อน</span>`;
+    }
+
+    function getPrevMonthRange(start, end) {
+        // ถ้าช่วงเวลาที่เลือกครอบคลุมทั้งเดือน ให้เทียบกับเดือนก่อนหน้า
+        const s = new Date(start);
+        const e = new Date(end);
+        const prevStart = new Date(s.getFullYear(), s.getMonth() - 1, s.getDate());
+        const prevEnd = new Date(e.getFullYear(), e.getMonth() - 1, e.getDate());
+        return {
+            start: prevStart.toISOString().split('T')[0],
+            end: prevEnd.toISOString().split('T')[0]
+        };
+    }
+
+    function isFullMonthRange(start, end) {
+        const s = new Date(start);
+        const e = new Date(end);
+        const firstDay = new Date(s.getFullYear(), s.getMonth(), 1);
+        const lastDay = new Date(s.getFullYear(), s.getMonth() + 1, 0);
+        return s.getTime() === firstDay.getTime() && e.getTime() === lastDay.getTime();
+    }
+
+    function applyRealFilter(items) {
+        if (!realFilterActive) return items;
+        return items.filter(item => {
+            if (item.type !== 'income') {
+                return !EXCLUDE_EXPENSE_CATS.includes(item.category);
+            } else {
+                return !EXCLUDE_INCOME_CATS.includes(item.category);
+            }
+        });
     }
 
     /* ===== DASHBOARD ===== */
     function updateDashboard() {
-        const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+        const allExpenses = JSON.parse(localStorage.getItem("expenses")) || [];
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
         const searchTerm = document.getElementById('searchHistory').value.toLowerCase();
 
-        let filtered = expenses.filter(item => {
+        // filter by date, payment, type, search
+        let filtered = allExpenses.filter(item => {
             const dateMatch = item.date >= start && item.date <= end;
             const paymentMatch = currentPaymentFilter === 'all' || item.payment === currentPaymentFilter;
             const typeMatch = currentTypeFilter === 'all' ||
@@ -1265,6 +1274,9 @@
                                item.category.toLowerCase().includes(searchTerm);
             return dateMatch && paymentMatch && typeMatch && searchMatch;
         });
+
+        // apply real filter (ตัดสำรอง/ออม)
+        filtered = applyRealFilter(filtered);
 
         const incomeItems = filtered.filter(item => item.type === 'income');
         const expenseItems = filtered.filter(item => item.type !== 'income');
@@ -1286,6 +1298,98 @@
         const balanceElement = document.getElementById('netBalance');
         balanceElement.style.color = netBalance > 0 ? '#4cd137' : netBalance < 0 ? '#cf6679' : 'var(--accent)';
 
+        // ===== GROWTH CALCULATION =====
+        const prevRange = getPrevMonthRange(start, end);
+        let prevFiltered = allExpenses.filter(item => item.date >= prevRange.start && item.date <= prevRange.end);
+        prevFiltered = applyRealFilter(prevFiltered);
+
+        const prevIncome = prevFiltered.filter(i => i.type === 'income').reduce((s, i) => s + parseFloat(i.amount), 0);
+        const prevExpense = prevFiltered.filter(i => i.type !== 'income').reduce((s, i) => s + parseFloat(i.amount), 0);
+        const prevNet = prevIncome - prevExpense;
+
+        const incomeGrowth = calcGrowth(income, prevIncome);
+        const expenseGrowth = calcGrowth(expense, prevExpense);
+        const netGrowth = calcGrowth(netBalance, prevNet);
+
+        renderGrowthBadge('incomeGrowthBadge', incomeGrowth, false);
+        renderGrowthBadge('expenseGrowthBadge', expenseGrowth, true);
+
+        // ===== GROWTH COMPARISON BOX =====
+        const growthBox = document.getElementById('growthComparisonBox');
+        const hasGrowthData = prevFiltered.length > 0;
+        if (hasGrowthData) {
+            growthBox.classList.add('visible');
+            const grid = document.getElementById('growthComparisonGrid');
+
+            const items = [
+                {
+                    label: '💰 รายรับ',
+                    prev: prevIncome,
+                    curr: income,
+                    growth: incomeGrowth,
+                    isExpense: false,
+                    color: '#4cd137'
+                },
+                {
+                    label: '💸 รายจ่าย',
+                    prev: prevExpense,
+                    curr: expense,
+                    growth: expenseGrowth,
+                    isExpense: true,
+                    color: '#cf6679'
+                },
+                {
+                    label: '💵 คงเหลือ',
+                    prev: prevNet,
+                    curr: netBalance,
+                    growth: netGrowth,
+                    isExpense: false,
+                    color: 'var(--accent)'
+                }
+            ];
+
+            grid.innerHTML = items.map(item => {
+                let badgeCls = 'neutral', badgeText = '—';
+                if (item.growth !== null) {
+                    const up = item.growth > 0;
+                    const arrow = up ? '▲' : '▼';
+                    const absPct = Math.abs(item.growth).toFixed(1);
+                    if (item.isExpense) {
+                        badgeCls = up ? 'up-bad' : 'down-good';
+                    } else {
+                        if (item.label === '💵 คงเหลือ') {
+                            badgeCls = item.curr > item.prev ? 'up-good' : 'down-bad';
+                        } else {
+                            badgeCls = up ? 'up-good' : 'down-bad';
+                        }
+                    }
+                    if (Math.abs(item.growth) < 0.1) badgeCls = 'neutral';
+                    badgeText = `${arrow} ${absPct}%`;
+                }
+
+                // badge color mapping
+                const badgeStyle = badgeCls === 'up-bad' || badgeCls === 'down-bad'
+                    ? 'background: rgba(248,113,113,0.15); color: #f87171;'
+                    : badgeCls === 'up-good' || badgeCls === 'down-good'
+                    ? 'background: rgba(74,222,128,0.15); color: #4ade80;'
+                    : 'background: rgba(160,160,160,0.1); color: #a0a0a0;';
+
+                const prevFmt = item.prev.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                const currFmt = item.curr.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+                return `
+                <div class="growth-comparison-item">
+                    <div class="gci-label">${item.label}</div>
+                    <div class="gci-prev" style="color:var(--text-dim)">เดือนก่อน<br>${prevFmt} ฿</div>
+                    <div class="gci-curr" style="color:${item.color}">${currFmt} ฿</div>
+                    <span class="gci-badge" style="${badgeStyle}">${badgeText}</span>
+                </div>`;
+            }).join('');
+        } else {
+            growthBox.classList.remove('visible');
+        }
+
+        // ===== CHART =====
         const categoryData = {};
         expenseItems.forEach(item => {
             categoryData[item.category] = (categoryData[item.category] || 0) + parseFloat(item.amount);
@@ -1294,10 +1398,11 @@
         renderChart(sortedEntries.map(e => e[0]), sortedEntries.map(e => e[1]));
         updateMap(expenseItems);
 
+        // ===== HISTORY LIST =====
         const listContainer = document.getElementById('historyList');
         listContainer.innerHTML = filtered.length ? '' : '<small style="color:var(--text-dim); display:block; text-align:center; padding:10px;">ไม่มีข้อมูล</small>';
         filtered.slice().reverse().forEach((item) => {
-            const originalIndex = expenses.indexOf(item);
+            const originalIndex = allExpenses.indexOf(item);
             const div = document.createElement('div');
             div.className = 'history-item';
             div.innerHTML = `
@@ -1410,6 +1515,46 @@
         this.reset();
         initForm();
     });
+
+    /* ===== FORM ===== */
+    function updateCategoryOptions() {
+        const type = document.getElementById('transactionType').value;
+        const expenseGroup = document.getElementById('expenseGroup');
+        const incomeGroup = document.getElementById('incomeGroup');
+        const categoryLabel = document.getElementById('categoryLabel');
+        if (type === 'expense') {
+            expenseGroup.style.display = '';
+            incomeGroup.style.display = 'none';
+            categoryLabel.textContent = 'หมวดหมู่ค่าใช้จ่าย';
+            document.getElementById('category').value = 'อาหารมื้อหลัก';
+        } else {
+            expenseGroup.style.display = 'none';
+            incomeGroup.style.display = '';
+            categoryLabel.textContent = 'หมวดหมู่รายรับ';
+            document.getElementById('category').value = 'เงินเดือน';
+        }
+    }
+
+    function initForm() {
+        document.getElementById('date').value = today;
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').value = `${hours}:${minutes}`;
+        document.getElementById('transactionType').value = 'expense';
+        updateCategoryOptions();
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('submitBtn').innerText = "บันทึกรายการ";
+        document.getElementById('editNotice').style.display = "none";
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((p) => {
+                const lat = p.coords.latitude.toFixed(6);
+                const lng = p.coords.longitude.toFixed(6);
+                document.getElementById('location').value = `${lat}, ${lng}`;
+                document.getElementById('locStatus').innerText = "ข้อมูลพิกัดพร้อมบันทึกแล้ว";
+            });
+        }
+    }
 
     /* ===== IMPORT/EXPORT ===== */
     function exportData() {
