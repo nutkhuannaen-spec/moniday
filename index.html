@@ -735,7 +735,75 @@
         .trip-field label { font-size:0.68rem; text-transform:uppercase; letter-spacing:1.4px; color:var(--text-muted); font-weight:600; margin-bottom:6px; display:block; }
         .trip-field input { width:100%; padding:11px 14px; background:var(--bg); border:1.5px solid var(--border); border-radius:10px; font-size:0.9rem; color:var(--text); font-family:'Sarabun',sans-serif; outline:none; transition:border-color 0.2s; }
         .trip-field input:focus { border-color:var(--border-focus); }
-        .trip-date-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+        /* ========== FIX 1: Trip Date Range — custom date picker UI ========== */
+        .trip-date-range-field { margin-bottom: 13px; }
+        .trip-date-range-field label { font-size:0.68rem; text-transform:uppercase; letter-spacing:1.4px; color:var(--text-muted); font-weight:600; margin-bottom:6px; display:block; }
+        .trip-date-range-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 0;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .trip-date-range-row:focus-within {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(196,125,62,0.1);
+        }
+        .trip-date-half {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+        }
+        .trip-date-half:hover { background: var(--accent-light); }
+        .trip-date-half-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .trip-date-half-value {
+            font-size: 0.88rem;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .trip-date-half-value.placeholder { color: var(--text-muted); font-weight: 400; }
+        .trip-date-separator {
+            width: 1px;
+            background: var(--border);
+            align-self: stretch;
+        }
+        .trip-date-arrow {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        /* Hidden actual date inputs */
+        .trip-date-hidden {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            font-size: 16px; /* prevents iOS zoom */
+        }
+        .trip-date-half { position: relative; }
+
         .trip-budget-row { display:flex; align-items:center; gap:8px; background:var(--bg); border:1.5px solid var(--border); border-radius:10px; padding:11px 14px; }
         .trip-budget-row span { color:var(--text-muted); font-size:0.88rem; flex-shrink:0; }
         .trip-budget-row input { border:none; background:transparent; padding:0; font-size:0.9rem; }
@@ -787,9 +855,95 @@
         .trip-delete-btn { width:100%; background:transparent; color:var(--red); border:1.5px solid var(--red); border-radius:12px; padding:12px; font-size:0.82rem; font-family:'Sarabun',sans-serif; cursor:pointer; margin-top:8px; transition:all 0.2s; }
         .trip-delete-btn:hover { background:var(--red-light); }
 
-        .trip-tag-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
-        .trip-tag { padding:5px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--bg-elevated); font-size:0.72rem; color:var(--text-dim); cursor:pointer; transition:all 0.2s; font-family:'Sarabun',sans-serif; }
-        .trip-tag.selected { border-color:#3a7a7a; background:#e0f2f1; color:#00695c; font-weight:600; }
+        /* ========== FIX 2: Trip Tag — Collapsible Toggle with Search ========== */
+        .trip-tag-toggle-wrap { margin-bottom: 18px; }
+        .trip-tag-toggle-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .trip-tag-toggle-header:hover { border-color: var(--border-focus); background: var(--accent-light); }
+        .trip-tag-toggle-header.has-selection { border-color: #3a7a7a; background: #e0f2f1; }
+        .trip-tag-toggle-icon { font-size: 1rem; flex-shrink: 0; }
+        .trip-tag-toggle-text { flex: 1; }
+        .trip-tag-toggle-title { font-family: 'Sarabun', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--text); }
+        .trip-tag-toggle-sub { font-family: 'Sarabun', sans-serif; font-size: 0.68rem; color: var(--text-muted); margin-top: 1px; }
+        .trip-tag-toggle-arrow {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            transition: transform 0.25s;
+            flex-shrink: 0;
+        }
+        .trip-tag-toggle-wrap.open .trip-tag-toggle-arrow { transform: rotate(180deg); }
+
+        .trip-tag-dropdown {
+            display: none;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            overflow: hidden;
+            animation: fadeSlide 0.2s ease;
+        }
+        .trip-tag-toggle-wrap.open .trip-tag-dropdown { display: block; }
+
+        .trip-tag-search-wrap {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .trip-tag-search-wrap input {
+            padding: 9px 12px 9px 34px;
+            font-size: 0.82rem;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            width: 100%;
+            background: var(--bg-elevated);
+            font-family: 'Sarabun', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .trip-tag-search-wrap input:focus { border-color: var(--border-focus); }
+        .trip-tag-search-icon {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .trip-tag-options { max-height: 200px; overflow-y: auto; }
+        .trip-tag-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--bg-elevated);
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: 'Sarabun', sans-serif;
+        }
+        .trip-tag-option:last-child { border-bottom: none; }
+        .trip-tag-option:hover { background: var(--bg-elevated); }
+        .trip-tag-option.selected { background: #e0f2f1; }
+        .trip-tag-option-dot { width: 8px; height: 8px; border-radius: 50%; background: #3a7a7a; flex-shrink: 0; }
+        .trip-tag-option-dot.none { background: var(--border); }
+        .trip-tag-option-name { flex: 1; font-size: 0.85rem; color: var(--text); font-weight: 500; }
+        .trip-tag-option.selected .trip-tag-option-name { color: #00695c; font-weight: 600; }
+        .trip-tag-option-dates { font-size: 0.65rem; color: var(--text-muted); }
+        .trip-tag-check { font-size: 0.85rem; color: #3a7a7a; margin-left: auto; flex-shrink: 0; opacity: 0; }
+        .trip-tag-option.selected .trip-tag-check { opacity: 1; }
+        .trip-tag-empty { padding: 14px 16px; text-align: center; font-size: 0.78rem; color: var(--text-muted); }
 
         .trip-dashboard-box { background:white; border-radius:16px; padding:16px 18px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); border-top:3px solid #3a7a7a; }
         .trip-dashboard-title { font-family:'Playfair Display',serif; font-size:0.95rem; color:var(--text); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
@@ -801,6 +955,7 @@
 
         .empty-state { text-align:center; padding:24px; color:var(--text-muted); font-size:0.82rem; }
         .divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
+        .budget-summary-title { font-family: 'Sarabun', sans-serif;}
     </style>
 </head>
 
@@ -932,10 +1087,26 @@
                 </select>
             </div>
 
-            <!-- Trip Tag -->
+            <!-- ========== FIX 2: Trip Tag — Toggle + Search ========== -->
             <div class="form-group" id="tripTagGroup" style="display:none;">
-                <label>เชื่อมกับทริป (ถ้ามี)</label>
-                <div class="trip-tag-row" id="tripTagRow"></div>
+                <label>เชื่อมกับทริป</label>
+                <div class="trip-tag-toggle-wrap" id="tripTagToggleWrap">
+                    <div class="trip-tag-toggle-header" id="tripTagToggleHeader" onclick="toggleTripTagDropdown()">
+                        <div class="trip-tag-toggle-icon">🧳</div>
+                        <div class="trip-tag-toggle-text">
+                            <div class="trip-tag-toggle-title" id="tripTagToggleTitle">ไม่ระบุทริป</div>
+                            <div class="trip-tag-toggle-sub" id="tripTagToggleSub">แตะเพื่อเลือกทริปที่กำลังเดินทาง</div>
+                        </div>
+                        <div class="trip-tag-toggle-arrow">▼</div>
+                    </div>
+                    <div class="trip-tag-dropdown" id="tripTagDropdown">
+                        <div class="trip-tag-search-wrap">
+                            <span class="trip-tag-search-icon">🔍</span>
+                            <input type="text" id="tripTagSearch" placeholder="ค้นหาชื่อทริป..." oninput="filterTripTagOptions()" autocomplete="off">
+                        </div>
+                        <div class="trip-tag-options" id="tripTagOptions"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Location -->
@@ -947,17 +1118,17 @@
 
             <button type="submit" id="submitBtn" class="btn-primary" style="margin-top:4px;">บันทึกรายการ</button>
             <hr class="divider">
-            <button type="button" class="btn-secondary" onclick="showDashboard()">📊 ดูสรุปข้อมูล</button>
-            <button type="button" class="btn-secondary" onclick="showBudget()">🎯 วางแผนงบ</button>
-            <button type="button" class="btn-secondary" onclick="showTrips()">🧳 Trip Tracker</button>
-            <button type="button" class="btn-secondary" onclick="showLearn()">📚 ความรู้การเงิน</button>
+            <button type="button" class="btn-secondary" onclick="showDashboard()">📊 ดูสรุปข้อมูลทั้งหมด</button>
+            <button type="button" class="btn-secondary" onclick="showBudget()">🎯 วางแผนงบของตัวเอง</button>
+            <button type="button" class="btn-secondary" onclick="showTrips()">🧳 สำหรับการท่องเที่ยว</button>
+            <button type="button" class="btn-secondary" onclick="showLearn()">📚 ความรู้การเงิน อ่านได้ฟรี!</button>
         </form>
     </div>
 
     <!-- ===== DASHBOARD SECTION ===== -->
     <div id="dashboardSection">
         <div class="dash-header">
-            <div class="dash-title">ภาพรวม</div>
+            <div class="dash-title">ภาพรวมการเงินของตัวเรา</div>
             <div class="back-btn" onclick="showForm()">←</div>
         </div>
 
@@ -976,7 +1147,7 @@
         <div class="real-toggle" id="realFilterToggle" onclick="toggleRealFilter()">
             <div class="real-toggle-icon">🔍</div>
             <div class="real-toggle-text">
-                <div class="real-toggle-title">ดูรายจ่าย/รายรับ "จริงๆ"</div>
+                <div class="real-toggle-title">ดูที่เป็นรายรับ-รายจ่าย "จริงๆ"</div>
                 <div class="real-toggle-sub">ตัดหมวด สำรองจ่าย, เงินคืนสำรอง และ ลงทุน/ออมเงิน ออก</div>
             </div>
             <div class="toggle-pill"></div>
@@ -1021,7 +1192,7 @@
 
         <div class="budget-summary-box" id="budgetSummaryBox">
             <div class="budget-summary-header">
-                <div class="budget-summary-title">🎯 งบประมาณเดือนนี้</div>
+                <div class="budget-summary-title">🎯 แผนงบประมาณเดือนนี้</div>
                 <span class="budget-summary-link" onclick="showBudget()">ตั้งค่างบ →</span>
             </div>
             <div id="budgetSummaryContent"></div>
@@ -1055,7 +1226,7 @@
         <div class="section-label" style="margin-top:16px;">จัดการข้อมูล</div>
         <div class="data-row">
             <button class="data-btn export" onclick="exportData()">📥 Export <small>(แล้วเอาไปให้ AI วิเคราะห์)</small></button>
-            <button class="data-btn import" onclick="document.getElementById('importFile').click()">📤 Import <small>(กรณีย้ายเครื่องหรือติดตั้งใหม่)</small></button>
+            <button class="data-btn import" onclick="document.getElementById('importFile').click()">📤 Import <small>(ไฟล์ที่ได้จากการ Export)</small></button>
         </div>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
     </div>
@@ -1066,7 +1237,6 @@
      ============================== -->
 <div id="tripSection">
     <div id="tripListView">
-        <!-- ✅ FIX: Top back bar for Trip List -->
         <div class="page-top-bar">
             <button class="back-btn-top" onclick="showForm()">←</button>
             <div class="page-title">🧳 Trip Tracker</div>
@@ -1083,10 +1253,27 @@
                     <label>ชื่อทริป</label>
                     <input type="text" id="newTripName" placeholder="เช่น เชียงใหม่ มี.ค. 68">
                 </div>
-                <div class="trip-date-row">
-                    <div class="trip-field"><label>วันเริ่ม</label><input type="date" id="newTripStart"></div>
-                    <div class="trip-field"><label>วันสิ้นสุด</label><input type="date" id="newTripEnd"></div>
+
+                <!-- FIX 1: Beautiful date range picker -->
+                <div class="trip-date-range-field">
+                    <label>ช่วงวันเดินทาง</label>
+                    <div class="trip-date-range-row">
+                        <div class="trip-date-half" id="tripStartHalf">
+                            <div class="trip-date-half-label">วันเริ่ม</div>
+                            <div class="trip-date-half-value placeholder" id="tripStartDisplay">เลือกวันที่</div>
+                            <input type="date" id="newTripStart" class="trip-date-hidden"
+                                onchange="updateTripDateDisplay()">
+                        </div>
+                        <div class="trip-date-separator"></div>
+                        <div class="trip-date-half" id="tripEndHalf">
+                            <div class="trip-date-half-label">วันสิ้นสุด</div>
+                            <div class="trip-date-half-value placeholder" id="tripEndDisplay">เลือกวันที่</div>
+                            <input type="date" id="newTripEnd" class="trip-date-hidden"
+                                onchange="updateTripDateDisplay()">
+                        </div>
+                    </div>
                 </div>
+
                 <div class="trip-field">
                     <label>งบประมาณทริป (ไม่บังคับ)</label>
                     <div class="trip-budget-row"><span>฿</span><input type="number" id="newTripBudget" placeholder="0" inputmode="decimal"></div>
@@ -1099,7 +1286,6 @@
     </div>
 
     <div id="tripDetailView">
-        <!-- ✅ FIX: Top back bar for Trip Detail — back to list, and home button -->
         <div class="page-top-bar" style="justify-content:space-between;">
             <div style="display:flex;align-items:center;gap:10px;">
                 <button class="back-btn-top" onclick="showTripList()">←</button>
@@ -1133,10 +1319,9 @@
      BUDGET SECTION
      ============================== -->
 <div id="budgetSection">
-    <!-- ✅ FIX: Top back bar for Budget -->
     <div class="page-top-bar">
         <button class="back-btn-top" onclick="showForm()">←</button>
-        <div class="page-title">🎯 วางแผนงบประมาณ</div>
+        <div class="page-title">🎯 วางแผนงบใช้เงิน</div>
     </div>
     <div class="budget-header">
         <div class="budget-month-nav">
@@ -1169,7 +1354,6 @@
      LEARN SECTION
      ============================== -->
 <div id="learnSection">
-    <!-- ✅ FIX: Top back bar for Learn -->
     <div class="page-top-bar">
         <button class="back-btn-top" onclick="showForm()">←</button>
         <div class="page-title">📚 ความรู้การเงิน</div>
@@ -1355,7 +1539,6 @@
         { code:'KRW', name:'วอนเกาหลี',       flag:'🇰🇷', symbol:'₩',  base:false },
     ];
 
-    // Default exchange rates (1 unit → THB)
     const DEFAULT_RATES = {
         USD: 34.5, EUR: 37.2, GBP: 43.5, JPY: 0.23,
         NZD: 20.5, AUD: 22.0, SGD: 25.5, CNY: 4.75, KRW: 0.025
@@ -1396,9 +1579,7 @@
         document.getElementById('currBarRate').textContent = isBase
             ? 'สกุลเงินหลัก · ไม่แปลงค่า'
             : `เรท: 1 ${curr.code} = ${currSettings.rates[curr.code] || DEFAULT_RATES[curr.code]} THB`;
-        // Update amount label
         document.getElementById('amountLabel').textContent = `จำนวนเงิน (${curr.code})`;
-        // Update dashboard currency tag
         const tag = document.getElementById('dashCurrencyTag');
         if (tag) tag.textContent = `${curr.flag} ${curr.code} · ${curr.name}`;
     }
@@ -1446,7 +1627,7 @@
             <div class="rate-row">
                 <label>1 ${curr.symbol} ${curr.code} =</label>
                 <div class="rate-input-wrap">
-                    <input type="number" id="rateInput_${curr.code}" 
+                    <input type="number" id="rateInput_${curr.code}"
                         value="${currentRate}" placeholder="${DEFAULT_RATES[tempSelectedCode] || ''}"
                         step="0.01" inputmode="decimal">
                     <span>THB</span>
@@ -1462,7 +1643,6 @@
     }
 
     function saveCurrencySettings() {
-        // Save rate if non-THB
         if (tempSelectedCode !== 'THB') {
             const rateInput = document.getElementById(`rateInput_${tempSelectedCode}`);
             if (rateInput && rateInput.value) {
@@ -1533,7 +1713,7 @@
     };
 
     /* ============================================
-       NAVIGATION — all pages hidden/shown cleanly
+       NAVIGATION
        ============================================ */
     function hideAll() {
         document.getElementById('mainContainer').style.display   = 'none';
@@ -1590,7 +1770,166 @@
     }
 
     /* ============================================
-       TRIP TRACKER
+       FIX 1: Trip Date Display
+       ============================================ */
+    function updateTripDateDisplay() {
+        const startVal = document.getElementById('newTripStart').value;
+        const endVal   = document.getElementById('newTripEnd').value;
+
+        const startEl = document.getElementById('tripStartDisplay');
+        const endEl   = document.getElementById('tripEndDisplay');
+
+        if (startVal) {
+            startEl.textContent = formatThaiDateShort(startVal);
+            startEl.classList.remove('placeholder');
+        } else {
+            startEl.textContent = 'เลือกวันที่';
+            startEl.classList.add('placeholder');
+        }
+
+        if (endVal) {
+            endEl.textContent = formatThaiDateShort(endVal);
+            endEl.classList.remove('placeholder');
+        } else {
+            endEl.textContent = 'เลือกวันที่';
+            endEl.classList.add('placeholder');
+        }
+
+        // Highlight if start > end
+        const row = document.querySelector('.trip-date-range-row');
+        if (startVal && endVal && endVal < startVal) {
+            row.style.borderColor = 'var(--red)';
+        } else if (startVal || endVal) {
+            row.style.borderColor = 'var(--border-focus)';
+        } else {
+            row.style.borderColor = '';
+        }
+    }
+
+    function formatThaiDateShort(dateStr) {
+        if (!dateStr) return '';
+        const [y, m, d] = dateStr.split('-');
+        const thM = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+        return `${parseInt(d)} ${thM[parseInt(m)-1]} ${parseInt(y)+543}`;
+    }
+
+    /* ============================================
+       FIX 2: Trip Tag Toggle + Search
+       ============================================ */
+    let _allTripsForTag = [];
+    let _selectedTripIdForTag = '';
+
+    function toggleTripTagDropdown() {
+        const wrap = document.getElementById('tripTagToggleWrap');
+        const isOpen = wrap.classList.contains('open');
+        if (isOpen) {
+            wrap.classList.remove('open');
+        } else {
+            wrap.classList.add('open');
+            document.getElementById('tripTagSearch').value = '';
+            renderTripTagOptions('');
+            setTimeout(() => document.getElementById('tripTagSearch').focus(), 100);
+        }
+    }
+
+    function filterTripTagOptions() {
+        const q = document.getElementById('tripTagSearch').value.toLowerCase();
+        renderTripTagOptions(q);
+    }
+
+    function renderTripTagOptions(query) {
+        const optionsEl = document.getElementById('tripTagOptions');
+        const trips = _allTripsForTag;
+        const filtered = query
+            ? trips.filter(t => t.name.toLowerCase().includes(query))
+            : trips;
+
+        let html = `<div class="trip-tag-option ${_selectedTripIdForTag === '' ? 'selected' : ''}"
+            onclick="selectTripTagOption('', 'ไม่ระบุทริป', '')">
+            <div class="trip-tag-option-dot none"></div>
+            <div class="trip-tag-option-name">ไม่ระบุทริป</div>
+            <div class="trip-tag-check">✓</div>
+        </div>`;
+
+        if (!filtered.length && query) {
+            html += `<div class="trip-tag-empty">ไม่พบทริปที่ค้นหา</div>`;
+        } else {
+            filtered.forEach(t => {
+                const status = tripStatus(t);
+                const statusLabel = {active:'🟢 กำลังเดินทาง', upcoming:'🔵 ยังไม่เริ่ม', done:'⚪ สิ้นสุดแล้ว'}[status];
+                html += `<div class="trip-tag-option ${_selectedTripIdForTag === t.id ? 'selected' : ''}"
+                    onclick="selectTripTagOption('${t.id}', '${t.name.replace(/'/g,"\\'")}', '${statusLabel}')">
+                    <div class="trip-tag-option-dot"></div>
+                    <div>
+                        <div class="trip-tag-option-name">${t.name}</div>
+                        <div class="trip-tag-option-dates">${statusLabel} · ${formatThaiDateShort(t.startDate)} – ${formatThaiDateShort(t.endDate)}</div>
+                    </div>
+                    <div class="trip-tag-check">✓</div>
+                </div>`;
+            });
+        }
+
+        optionsEl.innerHTML = html;
+    }
+
+    function selectTripTagOption(tripId, tripName, statusLabel) {
+        _selectedTripIdForTag = tripId;
+
+        const header = document.getElementById('tripTagToggleHeader');
+        const title  = document.getElementById('tripTagToggleTitle');
+        const sub    = document.getElementById('tripTagToggleSub');
+
+        if (tripId) {
+            title.textContent = '🧳 ' + tripName;
+            sub.textContent   = statusLabel;
+            header.classList.add('has-selection');
+        } else {
+            title.textContent = 'ไม่ระบุทริป';
+            sub.textContent   = 'แตะเพื่อเลือกทริปที่กำลังเดินทาง';
+            header.classList.remove('has-selection');
+        }
+
+        // Close dropdown
+        document.getElementById('tripTagToggleWrap').classList.remove('open');
+        // Re-render for checkmark update
+        renderTripTagOptions('');
+    }
+
+    function getSelectedTripId() {
+        return _selectedTripIdForTag || '';
+    }
+
+    function refreshTripTagSelector() {
+        const trips       = loadTrips();
+        // Show all trips (not just active) so user can link to upcoming trips too
+        const relevantTrips = trips.filter(t => tripStatus(t) !== 'done');
+        _allTripsForTag = relevantTrips;
+
+        const group = document.getElementById('tripTagGroup');
+        if (!relevantTrips.length) {
+            group.style.display = 'none';
+            return;
+        }
+        group.style.display = 'block';
+
+        // Reset selection if previously selected trip is no longer relevant
+        if (_selectedTripIdForTag && !relevantTrips.find(t => t.id === _selectedTripIdForTag)) {
+            selectTripTagOption('', 'ไม่ระบุทริป', '');
+        }
+
+        renderTripTagOptions('');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const wrap = document.getElementById('tripTagToggleWrap');
+        if (wrap && !wrap.contains(e.target)) {
+            wrap.classList.remove('open');
+        }
+    });
+
+    /* ============================================
+       TRIP TRACKER CORE
        ============================================ */
     const TRIP_STORAGE_KEY = 'moniday_trips';
 
@@ -1664,10 +2003,12 @@
         trips.push({ id:'trip_'+Date.now(), name, startDate:start, endDate:end,
             budget: budget ? parseFloat(budget) : null, createdAt: new Date().toISOString() });
         saveTrips(trips);
+        // Reset form
         document.getElementById('newTripName').value   = '';
         document.getElementById('newTripBudget').value = '';
         document.getElementById('newTripStart').value  = '';
         document.getElementById('newTripEnd').value    = '';
+        updateTripDateDisplay(); // reset display
         renderTripList();
         refreshTripTagSelector();
         updateTripDashboard();
@@ -1741,27 +2082,6 @@
         const [y, m, d] = dateStr.split('-');
         const thM = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
         return `${parseInt(d)} ${thM[parseInt(m)-1]} ${parseInt(y)+543}`;
-    }
-
-    function refreshTripTagSelector() {
-        const trips       = loadTrips();
-        const activeTrips = trips.filter(t => tripStatus(t) !== 'done');
-        const group = document.getElementById('tripTagGroup');
-        const row   = document.getElementById('tripTagRow');
-        if (!activeTrips.length) { group.style.display = 'none'; return; }
-        group.style.display = 'block';
-        row.innerHTML = `<div class="trip-tag" data-trip="" onclick="selectTripTag(this)">ไม่ระบุ</div>`
-            + activeTrips.map(t => `<div class="trip-tag" data-trip="${t.id}" onclick="selectTripTag(this)">${t.name}</div>`).join('');
-    }
-
-    function selectTripTag(el) {
-        document.querySelectorAll('.trip-tag').forEach(t => t.classList.remove('selected'));
-        el.classList.add('selected');
-    }
-
-    function getSelectedTripId() {
-        const sel = document.querySelector('.trip-tag.selected');
-        return sel ? sel.dataset.trip : '';
     }
 
     function updateTripDashboard() {
@@ -2016,7 +2336,6 @@
 
         const incomeItems  = filtered.filter(i => i.type === 'income');
         const expenseItems = filtered.filter(i => i.type !== 'income');
-        // Always show in THB for dashboard
         const income  = incomeItems.reduce((s,i)  => s + parseFloat(i.amountTHB || i.amount), 0);
         const expense = expenseItems.reduce((s,i) => s + parseFloat(i.amountTHB || i.amount), 0);
         const net     = income - expense;
@@ -2031,7 +2350,6 @@
         document.getElementById('avgExpense').textContent   = '฿' + (expense/days).toFixed(0);
         document.getElementById('avgIncome').textContent    = '฿' + (income/days).toFixed(0);
 
-        // Growth
         const prev  = getPrevRange(start, end);
         let prevF   = applyRealFilter(all.filter(i => i.date >= prev.start && i.date <= prev.end));
         const pInc  = prevF.filter(i => i.type==='income').reduce((s,i)=>s+parseFloat(i.amountTHB||i.amount),0);
@@ -2067,13 +2385,11 @@
             }).join('');
         } else { gBox.classList.remove('visible'); }
 
-        // Chart (always THB values)
         const catData = {};
         expenseItems.forEach(i => { catData[i.category] = (catData[i.category]||0) + parseFloat(i.amountTHB||i.amount); });
         const sorted = Object.entries(catData).sort((a,b)=>b[1]-a[1]);
         renderChart(sorted.map(e=>e[0]), sorted.map(e=>e[1]));
 
-        // History
         const list = document.getElementById('historyList');
         if (!filtered.length) { list.innerHTML = '<div class="empty-state">ไม่มีรายการในช่วงเวลานี้</div>'; return; }
         list.innerHTML = '';
@@ -2152,6 +2468,19 @@
         document.getElementById('editIndex').value    = index;
         document.getElementById('submitBtn').textContent = 'อัปเดตรายการ';
         document.getElementById('editNotice').style.display = 'block';
+        // Restore trip selection if any
+        if (item.tripId) {
+            const trips = loadTrips();
+            const trip  = trips.find(t => t.id === item.tripId);
+            if (trip) {
+                const status = tripStatus(trip);
+                const statusLabel = {active:'🟢 กำลังเดินทาง', upcoming:'🔵 ยังไม่เริ่ม', done:'⚪ สิ้นสุดแล้ว'}[status];
+                _selectedTripIdForTag = item.tripId;
+                document.getElementById('tripTagToggleTitle').textContent = '🧳 ' + trip.name;
+                document.getElementById('tripTagToggleSub').textContent   = statusLabel;
+                document.getElementById('tripTagToggleHeader').classList.add('has-selection');
+            }
+        }
         showForm();
     }
 
@@ -2165,13 +2494,13 @@
             time:        document.getElementById('time').value,
             type:        document.getElementById('transactionType').value,
             description: document.getElementById('description').value,
-            amount:      document.getElementById('amount').value,   // original input
-            amountTHB:   thbAmt.toFixed(2),                        // always THB
-            currency:    currSettings.code,                         // which currency was input
+            amount:      document.getElementById('amount').value,
+            amountTHB:   thbAmt.toFixed(2),
+            currency:    currSettings.code,
             category:    document.getElementById('category').value,
             payment:     document.getElementById('payment').value,
             location:    document.getElementById('location').value,
-            tripId:      getSelectedTripId() || ''
+            tripId:      getSelectedTripId()
         };
         const exp = JSON.parse(localStorage.getItem('expenses')) || [];
         if (idx === -1) exp.push(entry); else exp[idx] = entry;
@@ -2240,6 +2569,13 @@
         document.getElementById('submitBtn').textContent = 'บันทึกรายการ';
         document.getElementById('editNotice').style.display = 'none';
         document.getElementById('convertedHint').style.display = 'none';
+        // Reset trip tag
+        _selectedTripIdForTag = '';
+        if (document.getElementById('tripTagToggleTitle')) {
+            document.getElementById('tripTagToggleTitle').textContent = 'ไม่ระบุทริป';
+            document.getElementById('tripTagToggleSub').textContent   = 'แตะเพื่อเลือกทริปที่กำลังเดินทาง';
+            document.getElementById('tripTagToggleHeader').classList.remove('has-selection');
+        }
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(p => {
                 document.getElementById('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
